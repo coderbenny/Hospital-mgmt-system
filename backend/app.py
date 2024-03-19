@@ -1,10 +1,9 @@
-from flask import flask
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
 from flask_restful import Api, Resource
 from flask_migrate import Migrate
 from flask_cors import CORS
 
-from models.models import db
+from models.models import db, Doctor, Patient, DoctorPatient
 
 # Initialize app
 app = Flask(__name__)
