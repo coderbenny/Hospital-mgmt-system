@@ -30,3 +30,10 @@ class DoctorPatient(db.Model, SerializerMixin):
     __tablename__ = 'doctor_patients'
 
     id = db.Column(db.Integer, primary_key=True)
+
+
+# Appointments
+class Appointments(db.Model, SerializerMixin):
+    __tablename__ = 'appointments'
+
+    id = db.Column(db.Integer, primary_key=True)
