@@ -11,11 +11,14 @@ db = SQLAlchemy(metadata=metadata)
 
 # Models
 
+
 # Doctor
 class Doctor(db.Model, SerializerMixin):
     __tablename__ = 'doctors'
 
     id = db.Column(db.Integer, primary_key=True)
+    name= db.Column(db.String,unique=True, nullable=False)
+    specialty = db.Column(db.String)
 
 
 # Patient
@@ -23,8 +26,10 @@ class Patient(db.Model, SerializerMixin):
     __tablename__ = 'patients'
 
     id = db.Column(db.Integer, primary_key=True)
-
-
+    name= db.Column(db.String,nullable=False)
+    age = db.Column(db.Integer)
+    disease=db.Column(db.String)
+    
 # Doctor_Patient
 class DoctorPatient(db.Model, SerializerMixin):
     __tablename__ = 'doctor_patients'
