@@ -49,12 +49,26 @@ class ViewDoctor(Resource):
         except:
             db.session.rollback()
             return makeresponse(jsonify({'error':"Post  Failed"}),500)
+class ViewDoctorById(Resource):
+
+    def get(self,id):
+        try:
+            doctor = Doctor.query.filter_by(id=id).first(
+                )   #Return first record of the query
+            if doctor is None: 
+                return make_response(jsonify({'error':'Doctor with such id does not exist'}),404)
+            else:
+                return make_response(jsonify(doctor.to_dict()),200)
+        except Exception as e:
+            return make_response({"error":"Doctors not Found/Exist"},404)
+    
     
 
 
 
 api.add_resource(Index, '/')
 api.add_resource(ViewDoctor, '/doctors')
+api.add_resource(ViewDoctorById, '/doctors/<int:id>')
 
 # Patient
 
