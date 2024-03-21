@@ -13,20 +13,6 @@ db = SQLAlchemy(metadata=metadata)
 
 # Doctor
 
-class Appointment(db.Model, SerializerMixin):
-    __tablename__ = 'appointments'
-
-    id = db.Column(db.Integer, primary_key=True)  
-    patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'), nullable=False)
-    doctor_id = db.Column(db.Integer, db.ForeignKey('doctors.id'), nullable=False)  
-    date = db.Column(db.DateTime, unique=True, nullable=False)
-    # Time=db.Column(db.DateTime,nullable=False)
-
-
-    patient=relationship("Patient", back_populates= "appointments")
-    doctor=relationship("Doctor", back_populates="appointments")
-
-
 class Doctor(db.Model, SerializerMixin):
     __tablename__ = 'doctors'
 
@@ -61,6 +47,19 @@ class Patient(db.Model, SerializerMixin):
         if  age < 0:
             raise ValueError("Invalid age")
         return  age
+
+class Appointment(db.Model, SerializerMixin):
+    __tablename__ = 'appointments'
+
+    id = db.Column(db.Integer, primary_key=True)  
+    patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'), nullable=False)
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctors.id'), nullable=False)  
+    date = db.Column(db.DateTime, unique=True, nullable=False)
+    # Time=db.Column(db.DateTime,nullable=False)
+
+
+    patient=relationship("Patient", back_populates= "appointments")
+    doctor=relationship("Doctor", back_populates="appointments")
 
 
     

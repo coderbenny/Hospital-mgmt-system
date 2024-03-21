@@ -24,7 +24,7 @@ class Index(Resource):
         return '<h1>Hospital Mgmt API Index Page</h1>'
 
 
-class Doctor(Resource):
+class ViewDoctor(Resource):
 
     def get(self):
         # try:
@@ -38,7 +38,7 @@ class Doctor(Resource):
 
 
 api.add_resource(Index, '/')
-api.add_resource(Doctor, '/doctors')
+api.add_resource(ViewDoctor, '/doctors')
 
 # Patient
 

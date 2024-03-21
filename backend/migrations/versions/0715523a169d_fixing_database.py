@@ -1,8 +1,8 @@
-"""added relationships and validations
+"""Fixing database
 
-Revision ID: ee8b3e7adc25
+Revision ID: 0715523a169d
 Revises: 
-Create Date: 2024-03-20 21:08:15.202265
+Create Date: 2024-03-20 22:02:20.341823
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ee8b3e7adc25'
+revision = '0715523a169d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('doctors',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('specialty', sa.String(), nullable=True),
+    sa.Column('speciality', sa.String(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )

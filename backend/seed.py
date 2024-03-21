@@ -36,24 +36,25 @@ with app.app_context():
     )for i in range(10)]
 
     db.session.add_all(patients)
-    db.session.commit()
 
     print("Creating appointments...")
 
-    appointments=[]
-
-    for i in range(10):
-        doctor= random.choice(doctors)
-        patient=random.choice(patients)
-        appointment=Appointment(
-            patient_id=patient.id,
-            doctor_id=doctor.id,
-            date= faker.date_between(start_date='-1y', end_date='today'),
-            patient =patient,
+    appointments = []
+    generated_dates=[]
+    for _ in range(10):
+        doctor = random.choice(doctors)
+        patient = random.choice(patients)
+        while True:
+            date=faker.date_between(start_date='today',end_date="+365d")
+            if date not in generated_dates :
+                generated_dates.append(date)
+                break
+        appointment = Appointment(
+            date=date,
+            patient=patient,
             doctor=doctor
         )
-
         appointments.append(appointment)
-    
     db.session.add_all(appointments)
-    db.session.commit()
+    db.session.commit()  
+    print("finished")
