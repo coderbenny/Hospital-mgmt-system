@@ -22,6 +22,26 @@ class Doctor(db.Model, SerializerMixin):
 
     appointments=db.relationship("Appointment" , back_populates="doctor")
 
+
+    def to_dict(self, visited=None, include_appointments=False):
+        if visited is None:
+            visited = set()
+        if self in visited:
+            return {'id': self.id}  # or any other representation to break the recursion
+        visited.add(self)
+        if include_appointments:
+             return {
+                'id': self.id,
+                'name': self.name,
+                'speciality' : self.speciality,
+                "appointments" : [ap.appointment.to_dict(visited) for ap in self.appointments]
+            }
+        else:
+            return {
+                'id': self.id,
+                'name': self.name,
+                'description': self.speciality
+            }
     @validates("specialty")
     def validate_specialty(self, key, specialty):
         specialities=['cardiologist','surgeon','phsiotherapist','pediatric']
@@ -41,6 +61,26 @@ class Patient(db.Model, SerializerMixin):
 
     appointments=db.relationship("Appointment" , back_populates="patient")
 
+
+    def to_dict(self, visited=None, include_appointments=False):
+        if visited is None:
+            visited = set()
+        if self in visited:
+            return {'id': self.id}  # or any other representation to break the recursion
+        visited.add(self)
+        if include_appointments:
+             return {
+                'id': self.id,
+                'name': self.name,
+                'age' : self.age,
+                "appointments" : [ap.appointment.to_dict(visited) for ap in self.appointments]
+            }
+        else:
+            return {
+                'id': self.id,
+                'name': self.name,
+                'age' : self.age
+            }
     @validates("age")
     def validate_specialty(self, key, age):
 
@@ -61,6 +101,20 @@ class Appointment(db.Model, SerializerMixin):
     patient=relationship("Patient", back_populates= "appointments")
     doctor=relationship("Doctor", back_populates="appointments")
 
+    def to_dict(self, visited=None):
+        if visited is None:
+            visited = set()
+        if self in visited:
+            return {'id': self.id}  # or any other representation to break the recursion
+        visited.add(self)
+        return {
+            'id': self.id,
+            'patient_id': self.patient_id,
+            'doctor_id' : self.doctor_id,
+            "date" : self.date,
+            "patient" : self.patient.to_dict(visited),
+            "doctor" : self.doctor.to_dict(visited)
+        }
 
     
 
