@@ -42,13 +42,13 @@ class Doctor(db.Model, SerializerMixin):
                 'name': self.name,
                 'description': self.speciality
             }
-    @validates("specialty")
-    def validate_specialty(self, key, specialty):
+    @validates("speciality")
+    def validate_speciality(self, key, speciality):
         specialities=['cardiologist','surgeon','phsiotherapist','pediatric']
 
-        if  specialty not in specialities:
+        if  speciality not in specialities:
             raise ValueError("Invalid speciality")
-        return  specialty
+        return  speciality
 
 # Patient
 class Patient(db.Model, SerializerMixin):
