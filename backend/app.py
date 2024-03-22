@@ -61,9 +61,6 @@ class ViewDoctorById(Resource):
                 return make_response(jsonify(doctor.to_dict()),200)
         except Exception as e:
             return make_response({"error":"Doctors not Found/Exist"},404)
-    
-    
-
 
 
 api.add_resource(Index, '/')

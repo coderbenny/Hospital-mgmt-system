@@ -42,7 +42,7 @@ class Doctor(db.Model, SerializerMixin):
                 'name': self.name,
                 'description': self.speciality
             }
-    @validates("specialty")
+    @validates("speciality")
     def validate_specialty(self, key, specialty):
         specialities=['cardiologist','surgeon','phsiotherapist','pediatric']
 
@@ -82,7 +82,7 @@ class Patient(db.Model, SerializerMixin):
                 'age' : self.age
             }
     @validates("age")
-    def validate_specialty(self, key, age):
+    def validate_age(self, key, age):
 
         if  age < 0:
             raise ValueError("Invalid age")
