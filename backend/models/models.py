@@ -60,7 +60,3 @@ class Appointment(db.Model, SerializerMixin):
 
     patient=relationship("Patient", back_populates= "appointments")
     doctor=relationship("Doctor", back_populates="appointments")
-
-
-    
-
