@@ -43,12 +43,16 @@ class Doctor(db.Model, SerializerMixin):
                 'description': self.speciality
             }
     @validates("speciality")
+<<<<<<< HEAD
     def validate_specialty(self, key, specialty):
+=======
+    def validate_speciality(self, key, speciality):
+>>>>>>> 8d1d2ea802127b304cab1d4808a7d68d03a00b92
         specialities=['cardiologist','surgeon','phsiotherapist','pediatric']
 
-        if  specialty not in specialities:
+        if  speciality not in specialities:
             raise ValueError("Invalid speciality")
-        return  specialty
+        return  speciality
 
 # Patient
 class Patient(db.Model, SerializerMixin):
@@ -73,13 +77,15 @@ class Patient(db.Model, SerializerMixin):
                 'id': self.id,
                 'name': self.name,
                 'age' : self.age,
+                'disease': self.disease,
                 "appointments" : [ap.appointment.to_dict(visited) for ap in self.appointments]
             }
         else:
             return {
                 'id': self.id,
                 'name': self.name,
-                'age' : self.age
+                'age' : self.age,
+                'disease': self.disease
             }
     @validates("age")
     def validate_age(self, key, age):
