@@ -20,7 +20,7 @@ class Doctor(db.Model, SerializerMixin):
     name= db.Column(db.String,unique=True, nullable=False)
     speciality = db.Column(db.String)
 
-    appointments=db.relationship("Appointment" , back_populates="doctor")
+    appointments=db.relationship("Appointment" , back_populates="doctor",cascade = 'all, delete-orphan')
 
 
     def to_dict(self, visited=None, include_appointments=False):
@@ -43,11 +43,7 @@ class Doctor(db.Model, SerializerMixin):
                 'description': self.speciality
             }
     @validates("speciality")
-<<<<<<< HEAD
-    def validate_specialty(self, key, specialty):
-=======
     def validate_speciality(self, key, speciality):
->>>>>>> 8d1d2ea802127b304cab1d4808a7d68d03a00b92
         specialities=['cardiologist','surgeon','phsiotherapist','pediatric']
 
         if  speciality not in specialities:
@@ -63,7 +59,7 @@ class Patient(db.Model, SerializerMixin):
     age = db.Column(db.Integer)
     disease=db.Column(db.String)
 
-    appointments=db.relationship("Appointment" , back_populates="patient")
+    appointments=db.relationship("Appointment" , back_populates="patient",cascade = 'all, delete-orphan')
 
 
     def to_dict(self, visited=None, include_appointments=False):

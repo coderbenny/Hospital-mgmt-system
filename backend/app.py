@@ -61,12 +61,7 @@ class ViewDoctorById(Resource):
                 return make_response(jsonify(doctor.to_dict()),200)
         except Exception as e:
             return make_response({"error":"Doctors not Found/Exist"},404)
-<<<<<<< HEAD
-
-
-=======
-        
-    
+            
     def delete(self,id):
         doctor = Doctor.query.filter_by(id=id).first()
         if doctor is None:
@@ -161,13 +156,13 @@ class ViewAppointment(Resource):
             doctor_id=doctor_id,
             date = date
         )
-        try:
-            db.session.add(new_appointment)     
-            db.session.commit()
-            return make_response(jsonify(new_appointment.to_dict(),200))
-        except:
-            db.session.rollback()
-            return make_response(jsonify({'error':"Post  Failed"}),500)
+        # try:
+        db.session.add(new_appointment)     
+        db.session.commit()
+        return make_response(jsonify(new_appointment.to_dict(),200))
+        # except:
+        #     db.session.rollback()
+        #     return make_response(jsonify({'error':"Post  Failed"}),500)
         
 class ViewAppointmentById(Resource):
 
@@ -188,7 +183,7 @@ class ViewAppointmentById(Resource):
         if appointment is None:
             return make_response(jsonify({'error': 'Patient with such id does not exist'}),404)
         db.session.delete(appointment)
-        db.sesssion.commit()
+        db.session.commit()
 
         response = make_response(
             jsonify({'Appointment deleted': True}),
@@ -199,7 +194,6 @@ class ViewAppointmentById(Resource):
     
     
         
->>>>>>> 8d1d2ea802127b304cab1d4808a7d68d03a00b92
 api.add_resource(Index, '/')
 api.add_resource(ViewDoctor, '/doctors')
 api.add_resource(ViewDoctorById, '/doctors/<int:id>')
