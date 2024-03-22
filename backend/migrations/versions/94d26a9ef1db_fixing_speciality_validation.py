@@ -1,8 +1,8 @@
-"""Fixing database
+"""Fixing speciality validation
 
-Revision ID: 0715523a169d
+Revision ID: 94d26a9ef1db
 Revises: 
-Create Date: 2024-03-20 22:02:20.341823
+Create Date: 2024-03-22 20:41:28.005090
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0715523a169d'
+revision = '94d26a9ef1db'
 down_revision = None
 branch_labels = None
 depends_on = None

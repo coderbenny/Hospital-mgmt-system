@@ -18,10 +18,10 @@ with app.app_context():
 
     # Create some doctors and patients for testing purposes
     print("Creating doctors...")
-
+    specialities=['cardiologist','surgeon','phsiotherapist','pediatric']
     doctors=[Doctor(
         name =  faker.name(),
-        speciality= faker.word() 
+        speciality= random.choice(specialities)
     )for i in range(10)]
 
     db.session.add_all(doctors)

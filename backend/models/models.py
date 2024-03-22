@@ -73,16 +73,18 @@ class Patient(db.Model, SerializerMixin):
                 'id': self.id,
                 'name': self.name,
                 'age' : self.age,
+                'disease': self.disease,
                 "appointments" : [ap.appointment.to_dict(visited) for ap in self.appointments]
             }
         else:
             return {
                 'id': self.id,
                 'name': self.name,
-                'age' : self.age
+                'age' : self.age,
+                'disease': self.disease
             }
     @validates("age")
-    def validate_specialty(self, key, age):
+    def validate_age(self, key, age):
 
         if  age < 0:
             raise ValueError("Invalid age")
