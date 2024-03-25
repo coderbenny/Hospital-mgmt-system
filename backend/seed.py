@@ -3,6 +3,7 @@ from app import app
 from models.models import Doctor, Patient, Appointment ,db
 from faker import Faker
 import random
+from datetime import datetime, timedelta
 
 with app.app_context():
 
@@ -45,12 +46,14 @@ with app.app_context():
         doctor = random.choice(doctors)
         patient = random.choice(patients)
         while True:
-            date=faker.date_between(start_date='today',end_date="+365d")
-            if date not in generated_dates :
-                generated_dates.append(date)
+            start_date = datetime.now()
+            end_date = start_date + timedelta(days=365)
+            fake_datetime = faker.date_time_between(start_date=start_date, end_date=end_date)
+            if fake_datetime not in generated_dates :
+                generated_dates.append(fake_datetime)
                 break
         appointment = Appointment(
-            date=date,
+            date=fake_datetime,
             patient=patient,
             doctor=doctor
         )

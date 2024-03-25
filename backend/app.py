@@ -2,7 +2,7 @@ from flask import Flask, make_response,jsonify, request
 from flask_restful import Api, Resource
 from flask_migrate import Migrate
 from flask_cors import CORS
-
+from datetime import datetime
 from models.models import db, Doctor, Patient, Appointment
 
 # Initialize app
@@ -154,15 +154,15 @@ class ViewAppointment(Resource):
         new_appointment=Appointment(
             patient_id=patient_id,
             doctor_id=doctor_id,
-            date = date
+            date = datetime.strptime(date, '%d-%m-%Y')
         )
-        # try:
-        db.session.add(new_appointment)     
-        db.session.commit()
-        return make_response(jsonify(new_appointment.to_dict(),200))
-        # except:
-        #     db.session.rollback()
-        #     return make_response(jsonify({'error':"Post  Failed"}),500)
+        try:
+            db.session.add(new_appointment)     
+            db.session.commit()
+            return make_response(jsonify(new_appointment.to_dict(),200))
+        except:
+            db.session.rollback()
+            return make_response(jsonify({'Format':"Use day-month-year"}),500)
         
 class ViewAppointmentById(Resource):
 
