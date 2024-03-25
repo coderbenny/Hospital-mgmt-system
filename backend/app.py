@@ -167,7 +167,7 @@ class ViewAppointment(Resource):
 class ViewAppointmentById(Resource):
 
     def get(self,id):
-        try:
+        try: 
             appointment = Appointment.query.filter_by(id=id).first(
                 )   #Return first record of the query
             if appointment is None: 
