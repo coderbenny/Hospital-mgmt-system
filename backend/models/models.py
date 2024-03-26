@@ -20,9 +20,8 @@ class Doctor(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name= db.Column(db.String,unique=True, nullable=False)
     speciality = db.Column(db.String)
-
-
     appointments=db.relationship("Appointment" , back_populates="doctor",cascade = 'all, delete-orphan')
+    # user=db.relationship('User', backref='doctor')
 
 
     def to_dict(self, visited=None, include_appointments=False):
@@ -66,6 +65,7 @@ class Patient(db.Model, SerializerMixin):
 
     appointments=db.relationship("Appointment" , back_populates="patient",cascade = 'all, delete-orphan')
 
+    # user=db.relationship('User', backref='patient')
 
     def to_dict(self, visited=None, include_appointments=False):
         if visited is None:
@@ -104,8 +104,6 @@ class Appointment(db.Model, SerializerMixin):
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctors.id'), nullable=False)  
     date = db.Column(db.DateTime, unique=True, nullable=False)
     # Time=db.Column(db.DateTime,nullable=False)
-
-
     patient=relationship("Patient", back_populates= "appointments")
     doctor=relationship("Doctor", back_populates="appointments")
 
@@ -128,7 +126,9 @@ class Appointment(db.Model, SerializerMixin):
 class User(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
-
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
+
+    # doctor=db.relationship('Doctor', backref='user')
+    # patient=db.relationship('Patient', backref='user')
