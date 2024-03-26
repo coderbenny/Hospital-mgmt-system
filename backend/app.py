@@ -219,13 +219,13 @@ class Register(Resource):
         db.session.commit()
 
         return f'Welcome {username}'
-    
+
 
 class Login(Resource):
     def post(self):
-        username = request.json.get('username', None)
-        password = request.json.get('password_hash', None)
-        email = request.json.get('email', None)
+        username = request.json.get('username')
+        password = request.json.get('password_hash')
+        email = request.json.get('email')
 
         if not username or not password or not email:
             return 'Invalid Login', 400     
@@ -234,24 +234,13 @@ class Login(Resource):
 
         if not user:
             return 'User not Found', 400
-        if bcrypt.check_password_hash(password.decode('utf-8'), user.password_hash):
-            return f'Welcome Back {user.username}'
-        else: 
-            return 'Incorrect Password'
         
+        if not bcrypt.check_password_hash(user.password_hash, password):
+            return 'Invalid Password'
+        
+        # else:
+        return username
 
-# class Login(Resource):
-#     def post(self):
-#         username = request.get_json()['username']
-#         user = Doctor.query.filter(Doctor.username == username) or Patient.query.filter(Patient.username == username)
-
-#         password = request.gert_json()['password']    
-
-#         if user.authenticate(password):
-#             session['user_id'] = user.id
-#             return user.to_dict(), 200
-#         return {'error': 'Invalid username or password'}, 401
-    
         
 api.add_resource(Index, '/')
 api.add_resource(ViewDoctor, '/doctors')
