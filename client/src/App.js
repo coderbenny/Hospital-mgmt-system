@@ -4,7 +4,7 @@ import './App.css';
 function App() {
   return (
     <div className="">
-      <h1 className='font-bold text-2xl text-center'>Hospital Management System</h1>
+      <h1 className='font-bold text-2xl text-center color-green'>Hospital Management System</h1>
     </div>
   );
 }
