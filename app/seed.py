@@ -1,6 +1,6 @@
 from flask import Flask
 from app import app 
-from models.models import Doctor, Patient, Appointment ,db
+from models.models import Doctor, Patient, Appointment , db, User
 from faker import Faker
 import random
 from datetime import datetime, timedelta
@@ -16,6 +16,7 @@ with app.app_context():
     Doctor.query.delete()
     Patient.query.delete()
     Appointment.query.delete()
+    User.query.delete()
 
     # Create some doctors and patients for testing purposes
     print("Creating doctors...")
@@ -58,6 +59,15 @@ with app.app_context():
             doctor=doctor
         )
         appointments.append(appointment)
+
+    print('adding usernames')
+    users = [User(
+        username=faker.name(),
+        password_hash=faker.password()
+    ) for i in range(10)]
+    db.session.add_all(users)
+
+
     db.session.add_all(appointments)
     db.session.commit()  
     print("finished")
