@@ -201,16 +201,20 @@ class ViewAppointmentById(Resource):
 def post():
     username = request.json.get('username', None)
     password = request.json.get('password_hash', None)
+    email = request.json.get('email', None)
 
     if not username:
-        return 'missing username', 400
+        return 'Missing username', 400
             
     if not password:
-        return 'missing password', 400
+        return 'Missing password', 400
+    
+    if not email:
+        return 'Missing Email', 400
             
     hashed_password = bcrypt.generate_password_hash('password').decode('utf-8') 
 
-    user = User(username=username, password_hash=hashed_password)
+    user = User(username=username, password_hash=hashed_password, email=email)
     db.session.add(user)
     db.session.commit()
 
@@ -219,7 +223,20 @@ def post():
 
 class Login(Resource):
     def post(self):
-        return 'Login'
+        username = request.json.get('username', None)
+        password = request.json.get('password_hash', None)
+        email = request.json.get('email', None)
+
+        if not username:
+            return 'missing username', 400
+                
+        if not password:
+            return 'missing password', 400
+        
+        if not email:
+            return 'Missing Email', 400
+    
+
 
 # class Login(Resource):
 #     def post(self):

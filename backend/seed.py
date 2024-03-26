@@ -63,7 +63,8 @@ with app.app_context():
     print('adding usernames')
     users = [User(
         username=faker.name(),
-        password_hash=faker.password()
+        password_hash=faker.password(),
+        email=faker.email()
     ) for i in range(10)]
     db.session.add_all(users)
 
