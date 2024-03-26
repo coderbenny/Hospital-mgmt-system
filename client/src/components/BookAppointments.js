@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function ScheduleApt(){
+function BookAppointments(){
 
     // State for appointment details
     const[appointment, setAppointment]=useState({
@@ -21,4 +21,4 @@ function ScheduleApt(){
     )
 }
 
-export default ScheduleApt;
+export default BookAppointments;
