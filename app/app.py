@@ -49,6 +49,7 @@ class ViewDoctor(Resource):
         except:
             db.session.rollback()
             return make_response(jsonify({'error':"Post  Failed"}),500)
+        
 class ViewDoctorById(Resource):
 
     def get(self,id):
