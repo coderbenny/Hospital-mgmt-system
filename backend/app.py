@@ -182,109 +182,47 @@ class ViewAppointmentById(Resource):
 
 class Register(Resource):
     def post(self):
-        try: 
-            data = request.get_json()
-            username = data['username']
-            password = data['_password_hash']
-            email = data['email']
-            role_id = data['role_id']
+        username = request.json.get('username', None)
+        password = request.json.get('password_hash', None)
+        email = request.json.get('email', None)
 
-            if not username or not password:
-                return {'message': 'Username, Password and Email are required'}
-            
-            #existing user check
-            existing_user = User.query.filter_by(email=email).first()
-            if existing_user:
-                return {'message' : 'Username already exists'}
+        if not username:
+            return 'Missing username', 400
                 
-            new_user = User(
-                username=username, 
-                _password_hash=password, 
-                email=email, role_id=role_id
-            )
-            db.session.add(new_user)
-            db.session.commit()
-
-            return make_response(jsonify(new_user.to_dict()), 201)
-        except ValueError:
-            return make_response(jsonify({"Invalid Email"}), 400)
-
+        if not password:
+            return 'Missing password', 400
         
-class Admins(Resource):
-    def get(self, id):
-        admins = Admin.query.filter_by(id=id).first()
-        response = make_response(jsonify(admins.to_dict()), 200)
-        return response
-    
-    def post(self):
-        data=request.get_json()
-        username = data['username']
-        password = data['_password_hash']
-        email = data['email']
+        if not email:
+            return 'Missing Email', 400
+                
+        hashed_password = bcrypt.generate_password_hash('password').decode('utf-8') 
 
-        admins = Admin.query.filter_by(username=username).first()
+        user = User(username=username, password_hash=hashed_password, email=email)
+        db.session.add(user)
+        db.session.commit()
 
-        if not admins:
-            return {'message' : 'Invalid Admin'}, 400  
+        return f'Welcome {username}'
 
-        session['admin_id'] = admins.id
 
-class CheckSession(Resource):
-    def get(self):
-        if 'user_id' in session:
-            user_id = session['user_id']
-            user = User.query.get(user_id)
-            return jsonify(user.to_dict()), 200
-        else:
-            return {}, 204
-        
 class Login(Resource):
     def post(self):
-        data = request.form.get()
-        email = data['email']
-        password = data['_password_hash']
-        username = data['username']
+        username = request.json.get('username')
+        password = request.json.get('password_hash')
+        email = request.json.get('email')
+
+        if not username or not password or not email:
+            return 'Invalid Login', 400     
         
         admins = Admin.query.filter_by(username=username).first()
 
-        if admins:
-            if admins.authenticate(password):
-                session['admin_id'] = admins.id
-                return {'message' : 'successful'}
-                # return redirect('http://127.0.0.1:5555/admin')
-            else:
-                return make_response(jsonify({'message': 'Invalid admin credentials'}), 400)
-            
-
-        else:
-            user = User.query.filter_by(email=email).first()
-            if user:
-                if user.authenticate(password):
-                    session['user_id'] = user.id
-                    return make_response(jsonify({'message': 'User login successful'}), 200)
-                else:
-                    return make_response(jsonify({'message': 'Invalid user credentials'}), 400)
-            else:
-                return make_response(jsonify({"message" : "Email not recognised"}), 400)
-
-class Logout(Resource):
-    def delete(self):
-        session.pop('user_id', None)
-        return {'Logged out'}, 204
-
-class Users(Resource):
-    def get(self):
-        users = User.query.all()
-        list_users = []
-        for user in users:
-            user_dict = {
-                "Id" : user.id,
-                "User Name": user.username,
-                "Email" : user.email,
-                "Role Id" : user.role_id,
-            }   
-            list_users.append(user_dict)
-        return make_response(jsonify(list_users), 200)
+        if not user:
+            return 'User not Found', 400
+        
+        if not bcrypt.check_password_hash(user.password_hash, password):
+            return 'Invalid Password'
+        
+        # else:
+        return username
 
         
 api.add_resource(Index, '/')
