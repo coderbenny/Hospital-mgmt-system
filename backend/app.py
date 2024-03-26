@@ -1,15 +1,23 @@
 from flask import Flask, make_response,jsonify, request
+from flask_bcrypt import Bcrypt
+
+app = Flask(__name__)
+bcrypt = Bcrypt(app)
 from flask_restful import Api, Resource
 from flask_migrate import Migrate
 from flask_cors import CORS
 from datetime import datetime
-from models.models import db, Doctor, Patient, Appointment
+
+from models.models import db, Doctor, Patient, Appointment, User
+# from flask.ext.bcrypt import Bcrypt
+# instantiate Bcrypt with app instance
 
 # Initialize app
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"]='sqlite:///app.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+bcrypt = Bcrypt(app)
 # Initialize API
 api = Api(app)
 
@@ -19,13 +27,10 @@ db.init_app(app)
 
 # Index Route
 class Index(Resource):
-
     def get(self):
         return '<h1>Hospital Mgmt API Index Page</h1>'
 
-
 class ViewDoctor(Resource):
-
     def get(self):
         try:
             doctors = Doctor.query.all()
@@ -49,6 +54,7 @@ class ViewDoctor(Resource):
         except:
             db.session.rollback()
             return make_response(jsonify({'error':"Post  Failed"}),500)
+        
 class ViewDoctorById(Resource):
 
     def get(self,id):
@@ -76,7 +82,6 @@ class ViewDoctorById(Resource):
         )
 
         return response
-
 
 class ViewPatient(Resource):
 
@@ -191,7 +196,44 @@ class ViewAppointmentById(Resource):
         )
 
         return response
+
+class Register(Resource):
+    def post(self):
+
+        username = request.json.get('username', None)
+
+        password = request.json.get('password', None)
+
+        if not username:
+            return 'missing username', 400
+        
+        if not password:
+            return 'missing password', 400
+        
+        hashed = bcrypt.hashpw(password.encode('uft-8'), bcrypt.gensalt())
+        user = User(username=username, password_hash=hashed)
+        db.session.add(user)
+        db.session.commit()
+
+        return f'Welcome {User.username}'
     
+
+class Login(Resource):
+    def post(self):
+        return 'Login'
+        pass
+
+# class Login(Resource):
+#     def post(self):
+#         username = request.get_json()['username']
+#         user = Doctor.query.filter(Doctor.username == username) or Patient.query.filter(Patient.username == username)
+
+#         password = request.gert_json()['password']    
+
+#         if user.authenticate(password):
+#             session['user_id'] = user.id
+#             return user.to_dict(), 200
+#         return {'error': 'Invalid username or password'}, 401
     
         
 api.add_resource(Index, '/')

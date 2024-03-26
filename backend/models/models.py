@@ -3,6 +3,8 @@ from sqlalchemy import MetaData, ForeignKey
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy_serializer import SerializerMixin
 
+from sqlalchemy.ext.hybrid import hybrid_property
+
 metadata = MetaData(naming_convention={
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
 })
@@ -10,7 +12,6 @@ metadata = MetaData(naming_convention={
 db = SQLAlchemy(metadata=metadata)
 
 # Models
-
 
 # Doctor
 
@@ -20,6 +21,7 @@ class Doctor(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name= db.Column(db.String,unique=True, nullable=False)
     speciality = db.Column(db.String)
+
 
     appointments=db.relationship("Appointment" , back_populates="doctor",cascade = 'all, delete-orphan')
 
@@ -51,6 +53,9 @@ class Doctor(db.Model, SerializerMixin):
             raise ValueError("Invalid speciality")
         return  speciality
 
+    def __repr__(self):
+        return f'Doctor {self.name} | ID {self.id}'
+
 # Patient
 class Patient(db.Model, SerializerMixin):
     __tablename__ = 'patients'
@@ -59,10 +64,6 @@ class Patient(db.Model, SerializerMixin):
     name= db.Column(db.String,nullable=False)
     age = db.Column(db.Integer)
     disease=db.Column(db.String)
-    
-# Doctor_Patient
-class DoctorPatient(db.Model, SerializerMixin):
-    __tablename__ = 'doctor_patients'
 
     appointments=db.relationship("Appointment" , back_populates="patient",cascade = 'all, delete-orphan')
 
@@ -95,6 +96,7 @@ class DoctorPatient(db.Model, SerializerMixin):
             raise ValueError("Invalid age")
         return  age
 
+#Appointments
 class Appointment(db.Model, SerializerMixin):
     __tablename__ = 'appointments'
 
@@ -123,5 +125,10 @@ class Appointment(db.Model, SerializerMixin):
             "doctor" : self.doctor.to_dict(visited)
         }
 
-    
+#login and password authenticators
+class User(db.Model, SerializerMixin):
 
+    id = db.Column(db.Integer, primary_key=True)
+
+    username = db.Column(db.String, unique=True, nullable=False)
+    password_hash = db.Column(db.String, nullable=False)
