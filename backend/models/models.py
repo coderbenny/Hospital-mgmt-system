@@ -1,3 +1,4 @@
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData, ForeignKey
 from sqlalchemy.orm import relationship, validates
@@ -20,15 +21,35 @@ class Doctor(db.Model, SerializerMixin):
     name= db.Column(db.String,unique=True, nullable=False)
     speciality = db.Column(db.String)
 
-    appointments=db.relationship("Appointment" , back_populates="doctor")
+    appointments=db.relationship("Appointment" , back_populates="doctor",cascade = 'all, delete-orphan')
 
-    @validates("specialty")
-    def validate_specialty(self, key, specialty):
+
+    def to_dict(self, visited=None, include_appointments=False):
+        if visited is None:
+            visited = set()
+        if self in visited:
+            return {'id': self.id}  # or any other representation to break the recursion
+        visited.add(self)
+        if include_appointments:
+             return {
+                'id': self.id,
+                'name': self.name,
+                'speciality' : self.speciality,
+                "appointments" : [ap.appointment.to_dict(visited) for ap in self.appointments]
+            }
+        else:
+            return {
+                'id': self.id,
+                'name': self.name,
+                'description': self.speciality
+            }
+    @validates("speciality")
+    def validate_speciality(self, key, speciality):
         specialities=['cardiologist','surgeon','phsiotherapist','pediatric']
 
-        if  specialty not in specialities:
+        if  speciality not in specialities:
             raise ValueError("Invalid speciality")
-        return  specialty
+        return  speciality
 
 # Patient
 class Patient(db.Model, SerializerMixin):
@@ -39,10 +60,32 @@ class Patient(db.Model, SerializerMixin):
     age = db.Column(db.Integer)
     disease=db.Column(db.String)
 
-    appointments=db.relationship("Appointment" , back_populates="patient")
+    appointments=db.relationship("Appointment" , back_populates="patient",cascade = 'all, delete-orphan')
 
+
+    def to_dict(self, visited=None, include_appointments=False):
+        if visited is None:
+            visited = set()
+        if self in visited:
+            return {'id': self.id}  # or any other representation to break the recursion
+        visited.add(self)
+        if include_appointments:
+             return {
+                'id': self.id,
+                'name': self.name,
+                'age' : self.age,
+                'disease': self.disease,
+                "appointments" : [ap.appointment.to_dict(visited) for ap in self.appointments]
+            }
+        else:
+            return {
+                'id': self.id,
+                'name': self.name,
+                'age' : self.age,
+                'disease': self.disease
+            }
     @validates("age")
-    def validate_specialty(self, key, age):
+    def validate_age(self, key, age):
 
         if  age < 0:
             raise ValueError("Invalid age")
@@ -60,3 +103,21 @@ class Appointment(db.Model, SerializerMixin):
 
     patient=relationship("Patient", back_populates= "appointments")
     doctor=relationship("Doctor", back_populates="appointments")
+
+    def to_dict(self, visited=None):
+        if visited is None:
+            visited = set()
+        if self in visited:
+            return {'id': self.id}  # or any other representation to break the recursion
+        visited.add(self)
+        return {
+            'id': self.id,
+            'patient_id': self.patient_id,
+            'doctor_id' : self.doctor_id,
+            "date" : self.date,
+            "patient" : self.patient.to_dict(visited),
+            "doctor" : self.doctor.to_dict(visited)
+        }
+
+    
+

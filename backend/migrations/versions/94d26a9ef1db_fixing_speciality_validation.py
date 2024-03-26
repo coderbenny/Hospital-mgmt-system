@@ -1,8 +1,16 @@
-"""Fixing database
+<<<<<<<< HEAD:backend/migrations/versions/987d8a70422b_.py
+"""empty message
 
-Revision ID: 0715523a169d
+Revision ID: 987d8a70422b
 Revises: 
-Create Date: 2024-03-20 22:02:20.341823
+Create Date: 2024-03-22 20:32:26.343268
+========
+"""Fixing speciality validation
+
+Revision ID: 94d26a9ef1db
+Revises: 
+Create Date: 2024-03-22 20:41:28.005090
+>>>>>>>> 8d1d2ea802127b304cab1d4808a7d68d03a00b92:backend/migrations/versions/94d26a9ef1db_fixing_speciality_validation.py
 
 """
 from alembic import op
@@ -10,7 +18,11 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0715523a169d'
+<<<<<<<< HEAD:backend/migrations/versions/987d8a70422b_.py
+revision = '987d8a70422b'
+========
+revision = '94d26a9ef1db'
+>>>>>>>> 8d1d2ea802127b304cab1d4808a7d68d03a00b92:backend/migrations/versions/94d26a9ef1db_fixing_speciality_validation.py
 down_revision = None
 branch_labels = None
 depends_on = None
