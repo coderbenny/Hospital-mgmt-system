@@ -197,28 +197,28 @@ class ViewAppointmentById(Resource):
 
         return response
 
-@app.route('/register', methods = ['POST'])
-def post():
-    username = request.json.get('username', None)
-    password = request.json.get('password_hash', None)
-    email = request.json.get('email', None)
+class Register(Resource):
+    def post(self):
+        username = request.json.get('username', None)
+        password = request.json.get('password_hash', None)
+        email = request.json.get('email', None)
 
-    if not username:
-        return 'Missing username', 400
-            
-    if not password:
-        return 'Missing password', 400
-    
-    if not email:
-        return 'Missing Email', 400
-            
-    hashed_password = bcrypt.generate_password_hash('password').decode('utf-8') 
+        if not username:
+            return 'Missing username', 400
+                
+        if not password:
+            return 'Missing password', 400
+        
+        if not email:
+            return 'Missing Email', 400
+                
+        hashed_password = bcrypt.generate_password_hash('password').decode('utf-8') 
 
-    user = User(username=username, password_hash=hashed_password, email=email)
-    db.session.add(user)
-    db.session.commit()
+        user = User(username=username, password_hash=hashed_password, email=email)
+        db.session.add(user)
+        db.session.commit()
 
-    return f'Welcome {username}'
+        return f'Welcome {username}'
     
 
 class Login(Resource):
@@ -227,16 +227,18 @@ class Login(Resource):
         password = request.json.get('password_hash', None)
         email = request.json.get('email', None)
 
-        if not username:
-            return 'missing username', 400
-                
-        if not password:
-            return 'missing password', 400
+        if not username or not password or not email:
+            return 'Invalid Login', 400     
         
-        if not email:
-            return 'Missing Email', 400
-    
+        user = User.query.filter_by(email=email).first()
 
+        if not user:
+            return 'User not Found', 400
+        if bcrypt.check_password_hash(password.decode('utf-8'), user.password_hash):
+            return f'Welcome Back {user.username}'
+        else: 
+            return 'Incorrect Password'
+        
 
 # class Login(Resource):
 #     def post(self):
@@ -259,6 +261,7 @@ api.add_resource(ViewPatientById, '/patients/<int:id>')
 api.add_resource(ViewAppointment, '/appointments')
 api.add_resource(ViewAppointmentById, '/appointments/<int:id>')
 api.add_resource(Login, '/login')
+api.add_resource(Register, '/register')
 
 
 
