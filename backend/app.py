@@ -197,31 +197,29 @@ class ViewAppointmentById(Resource):
 
         return response
 
-class Register(Resource):
-    def post(self):
+@app.route('/register', methods = ['POST'])
+def post():
+    username = request.json.get('username', None)
+    password = request.json.get('password_hash', None)
 
-        username = request.json.get('username', None)
+    if not username:
+        return 'missing username', 400
+            
+    if not password:
+        return 'missing password', 400
+            
+    hashed_password = bcrypt.generate_password_hash('password').decode('utf-8') 
 
-        password = request.json.get('password', None)
+    user = User(username=username, password_hash=hashed_password)
+    db.session.add(user)
+    db.session.commit()
 
-        if not username:
-            return 'missing username', 400
-        
-        if not password:
-            return 'missing password', 400
-        
-        hashed = bcrypt.hashpw(password.encode('uft-8'), bcrypt.gensalt())
-        user = User(username=username, password_hash=hashed)
-        db.session.add(user)
-        db.session.commit()
-
-        return f'Welcome {User.username}'
+    return f'Welcome {username}'
     
 
 class Login(Resource):
     def post(self):
         return 'Login'
-        pass
 
 # class Login(Resource):
 #     def post(self):
@@ -243,6 +241,7 @@ api.add_resource(ViewPatient, '/patients')
 api.add_resource(ViewPatientById, '/patients/<int:id>')
 api.add_resource(ViewAppointment, '/appointments')
 api.add_resource(ViewAppointmentById, '/appointments/<int:id>')
+api.add_resource(Login, '/login')
 
 
 
