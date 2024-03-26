@@ -84,6 +84,7 @@ class Patient(db.Model, SerializerMixin):
                 'age' : self.age,
                 'disease': self.disease
             }
+    
     @validates("age")
     def validate_age(self, key, age):
 
