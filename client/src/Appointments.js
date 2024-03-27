@@ -44,8 +44,8 @@ export default function Appointments(){
                     <tr>
                         <th>Appointment ID</th>
                         <th>Date</th>
-                        <th>Time</th>
-                        <th>Action</th>
+                        <th>Patient Id</th>
+                        <th>Doctor Id</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,7 +53,8 @@ export default function Appointments(){
                         <tr key={appointment.id}>
                             <td>{appointment.id}</td>
                             <td>{appointment.date}</td>
-                            <td>{appointment.time}</td>
+                            <td>{appointment.patient_id}</td>
+                            <td>{appointment.doctor_id}</td>
                             <td>
                                 <button onClick={() => handleDelete(appointment.id)}>Delete</button>
                             </td>
