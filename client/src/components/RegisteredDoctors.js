@@ -41,12 +41,12 @@ export default function RegisteredDoctors(){
     return (
         <div>
             <p>Registered Doctors</p>
-            <table>
+            <table class="table-auto w-full bg-white border border-gray-300">
                 <thead>
                     <tr>
-                        <th>Doctor ID</th>
-                        <th>Name</th>
-                        <th>Speciality</th>
+                        <th class="border border-gray-300 px-4 py-2">Doctor ID</th>
+                        <th class="border border-gray-300 px-4 py-2">Name</th>
+                        <th class="border border-gray-300 px-4 py-2">Speciality</th>
                     </tr>
                 </thead>
                 <tbody>
