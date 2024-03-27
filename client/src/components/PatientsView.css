@@ -1,46 +1,49 @@
-/* PatientsView.css */
-
-.container {
+.circle {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
-}
-
-.button-circle {
-    width: 100px; /* Adjust button size */
-    height: 100px; /* Adjust button size */
-    border-radius: 50%; /* Make the button round */
-    background-color: #4CAF50; /* Green */
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    margin: 10px; /* Adjust button margin */
-    transition: background-color 0.3s;
-}
-
-/* Adjust positions of buttons */
-.button1 {
-    transform: rotate(30deg) translateY(-150px);
-}
-
-.button2 {
-    transform: rotate(90deg) translateY(-150px);
-}
-
-.button3 {
-    transform: rotate(150deg) translateY(-150px);
-}
-
-.button4 {
-    transform: rotate(210deg) translateY(-150px);
-}
-
-.button5 {
-    transform: rotate(270deg) translateY(-150px);
-}
-
-.button6 {
-    transform: rotate(330deg) translateY(-150px);
-}
+    justify-content: center;
+    position: relative;
+    width: 400px; /* Adjust this to your liking */
+    height: 400px; /* Adjust this to your liking */
+  }
+  
+  .circle button {
+    position: absolute;
+  }
+  
+  .circle button:nth-child(1) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg) translateY(-200px);
+  }
+  
+  .circle button:nth-child(2) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg) translateY(-200px);
+  }
+  
+  .circle button:nth-child(3) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(30deg) translateY(-200px);
+  }
+  
+  .circle button:nth-child(4) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(90deg) translateY(-200px);
+  }
+  
+  .circle button:nth-child(5) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(150deg) translateY(-200px);
+  }
+  .circle button:nth-child(6) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(210deg) translateY(-200px);
+  }
+  
