@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from datetime import datetime
 from models.models import db, Doctor, Patient, Appointment
+from flask_session import Session
 
 # Initialize app
 app = Flask(__name__)
@@ -15,7 +16,9 @@ api = Api(app)
 
 migrate = Migrate(app, db)
 
+# server_session= Session(app)
 db.init_app(app)
+cors=CORS(app, supports_credentials=True)
 
 # Index Route
 class Index(Resource):
@@ -154,7 +157,7 @@ class ViewAppointment(Resource):
         new_appointment=Appointment(
             patient_id=patient_id,
             doctor_id=doctor_id,
-            date = datetime.strptime(date, '%d-%m-%Y')
+            date = datetime.strptime(date, '%Y-%m-%d')
         )
         try:
             db.session.add(new_appointment)     
