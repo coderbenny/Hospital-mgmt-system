@@ -1,13 +1,29 @@
-from flask import Flask, make_response,jsonify, request, session, redirect
+from flask import Flask, make_response,jsonify, request
+from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
-from flask_restful import Resource
+from flask_restful import Api, Resource
+from flask_migrate import Migrate
+from flask_cors import CORS
 from datetime import datetime
-from models.models import Doctor, Patient, Appointment, User, Admin
+from models.models import db, Doctor, Patient, Appointment, User
 # from flask.ext.bcrypt import Bcrypt
 # instantiate Bcrypt with app instance
 from config import app, db, api, bcrypt
 
 # Initialize app
+app = Flask(__name__)
+bcrypt = Bcrypt(app)
+app.config["SQLALCHEMY_DATABASE_URI"]='sqlite:///app.db'
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+bcrypt = Bcrypt(app)
+# Initialize API
+api = Api(app)
+
+migrate = Migrate(app, db)
+
+db.init_app(app)
+
 # Index Route
 class Index(Resource):
     def get(self):
@@ -182,26 +198,28 @@ class ViewAppointmentById(Resource):
 
 class Register(Resource):
     def post(self):
-        username = request.json.get('username', None)
-        password = request.json.get('password_hash', None)
-        email = request.json.get('email', None)
+        try: 
+            username = request.json.get('username', None)
+            password = request.json.get('password_hash', None)
+            email = request.json.get('email', None)
 
-        if not username:
-            return 'Missing username', 400
-                
-        if not password:
-            return 'Missing password', 400
-        
-        if not email:
-            return 'Missing Email', 400
-                
-        hashed_password = bcrypt.generate_password_hash('password').decode('utf-8') 
+            if not username:
+                return 'Missing username', 400
+                    
+            if not password:
+                return 'Missing password', 400
+            
+            if not email:
+                return 'Missing Email', 400
+                    
+            hashed_password = bcrypt.generate_password_hash('password').decode('utf-8') 
 
-        user = User(username=username, password_hash=hashed_password, email=email)
-        db.session.add(user)
-        db.session.commit()
+            user = User(username=username, password_hash=hashed_password, email=email)
+            db.session.add(user)
+            db.session.commit()
+        except IntegrityError: 
+            return 'User already exists'
 
-        return f'Welcome {username}'
 
 
 class Login(Resource):
