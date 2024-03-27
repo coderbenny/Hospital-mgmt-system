@@ -13,6 +13,7 @@ import DoctorUpdate from './components/DoctorUpdate'
 import DoctorReg from './components/DoctorReg';
 
 function App() {
+
   return (
     <div className=''>
         <BrowserRouter>
