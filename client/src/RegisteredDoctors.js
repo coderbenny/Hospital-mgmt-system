@@ -16,6 +16,18 @@ export default function RegisteredDoctors(){
 
     const [doctors, setDoctors] = useState([]);
 
+    const handleDelete= (id) => {
+        fetch(`./doctors/${id}`, {
+            method: "DELETE",
+        })
+        .then(() => {
+            setDoctors((prevDoctors) => prevDoctors.filter(doctor => doctor.id !== id));
+        })
+        .catch((error) => {
+            console.error("Error deleting appointment:", error);
+        });
+    };
+
     useEffect(()=>{
         fetch("./doctors")
             .then((r) => r.json())
@@ -43,6 +55,9 @@ export default function RegisteredDoctors(){
                             <td>{doctors.id}</td>
                             <td>{doctors.name}</td>
                             <td>{doctors.speciality}</td>
+                            <td>
+                                <button onClick={() => handleDelete(doctors.id)}>Delete</button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
