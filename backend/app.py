@@ -18,6 +18,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 bcrypt = Bcrypt(app)
 # Initialize API
 api = Api(app)
+CORS(app)
 
 migrate = Migrate(app, db)
 
@@ -26,7 +27,7 @@ db.init_app(app)
 # Index Route
 class Index(Resource):
     def get(self):
-        return '<h1>Hospital Mgmt API Index Page</h1>'
+        return 'Hospital Mgmt API Index Page'
 
 class ViewDoctor(Resource):
     def get(self):
@@ -219,28 +220,27 @@ class Register(Resource):
         except IntegrityError: 
             return 'User already exists'
 
-
+class Admin(Resource):
+    def get(self):
+        return Admin
 
 class Login(Resource):
     def post(self):
+        # session['user_id'] = user.id
         username = request.json.get('username')
         password = request.json.get('password_hash')
         email = request.json.get('email')
-
         if not username or not password or not email:
             return 'Invalid Login', 400     
         
+        
         user = User.query.filter_by(email=email).first()
-
         if not user:
             return 'User not Found', 400
         
         if not bcrypt.check_password_hash(user.password_hash, password):
             return 'Invalid Password'
         
-        # else:
-        return username
-
         
 api.add_resource(Index, '/')
 api.add_resource(ViewDoctor, '/doctors')
@@ -251,20 +251,7 @@ api.add_resource(ViewAppointment, '/appointments')
 api.add_resource(ViewAppointmentById, '/appointments/<int:id>')
 api.add_resource(Login, '/login')
 api.add_resource(Register, '/register')
-
-
-
-
-# Patient
-
-
-# Doctor
-
-
-# Doctor_Patient
-
-
-# Apointments
+api.add_resource(Admin, '/admin')
 
 
 if __name__ == '__main__':

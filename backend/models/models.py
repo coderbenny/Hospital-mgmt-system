@@ -133,3 +133,9 @@ class User(db.Model, SerializerMixin):
 
     # doctor=db.relationship('Doctor', backref='user')
     # patient=db.relationship('Patient', backref='user')
+
+class SuperUser(db.Model, SerializerMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
+    password_hash = db.Column(db.String, nullable=False)
