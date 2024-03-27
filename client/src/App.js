@@ -1,4 +1,3 @@
-
 import './App.css';
 import DoctorLogin from './components/DoctorLogin';
 import PatientLogin from './components/PatientLogin';
@@ -11,7 +10,8 @@ import Home from './components/Home';
 function App() {
   return (
     <div className="App">
-     
+
+      <h1 className='font-bold text-2xl text-center color-green'>Hospital Management System</h1>
         <BrowserRouter>
           <Routes>
             <Route path='/' element={<Home/>}></Route>
