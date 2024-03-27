@@ -40,23 +40,23 @@ export default function RegisteredPatients(){
     }, [])
     return (
         <div>
-            <p>Registered Patients</p>
-            <table>
+            <p className="text-lg font-bold">Registered Patients</p>
+            <table className="table-auto border-collapse border border-gray-400">
                 <thead>
                     <tr>
-                        <th>Patient ID</th>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Disease</th>
+                        <th className="border border-green-400 px-4 py-2">Patient ID</th>
+                        <th className="border border-green-400 px-4 py-2">Name</th>
+                        <th className="border border-green-400 px-4 py-2">Age</th>
+                        <th className="border border-green-400 px-4 py-2">Disease</th>
                     </tr>
                 </thead>
                 <tbody>
                     {patients.map((patients) => (
                         <tr key={patients.id}>
-                            <td>{patients.id}</td>
-                            <td>{patients.name}</td>
-                            <td>{patients.age}</td>
-                            <td>{patients.disease}</td>
+                            <td className="border border-gray-400 px-4 py-2">{patients.id}</td>
+                            <td className="border border-gray-400 px-4 py-2">{patients.name}</td>
+                            <td className="border border-gray-400 px-4 py-2">{patients.age}</td>
+                            <td className="border border-gray-400 px-4 py-2">{patients.disease}</td>
                             <td>
                                 <button onClick={() => handleDelete(patients.id)}>Delete</button>
                             </td>
