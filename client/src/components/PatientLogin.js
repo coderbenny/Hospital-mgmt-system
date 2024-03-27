@@ -1,31 +1,37 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-
 class PatientLogin extends Component {
     render() {
         return (
-            <div>
-                <div>
-                    <h1>Patient Login</h1>
-                    <form action="">
-                        <div>
-                            <input type='text' id='username' />
-                            <label htmlFor='username'>Your Username</label>
-                        </div>
-                        <div>
-                            <input type='password' id='password' />
-                            <label htmlFor='password'>Your Password</label>
-                        </div>
-                        <div>
-                            <input type='checkbox' id='rememberMe' />
-                            <label htmlFor='rememberMe'>Remember Me</label>
-                        </div>
-                        <span>Forgot Password?</span>
-                        <button type='submit'>Login</button>
-                    </form>
-                    <span>New Patient? <Link to='/register_patient'>Create an Account</Link></span>
-                </div>
+            <div className='flex justify-center mt-5'>
+                <form action="" className='flex flex-col w-[500px] p-3 rounded-md shadow-md items-center'>
+                    <h1 className='font-bold text-2xl mb-4'>Patient Login</h1>
+
+                    <div className='items-center mb-1'> 
+                        <label className='font-semibold mr-2'>Username</label>
+                        <input type='username' name='username' className='px-2 border-2 border-gray-150' />
+                    </div>
+                    <div className='items-center mb-1'>
+                        <label className='font-semibold mr-3'>Password</label>
+                        <input type='password' name='password' className='px-2 border-2 border-gray-150' /> 
+                    </div>
+                    <div className='items-center mb-1'>
+                        <label className='font-semibold mr-2'>Remember Me</label>
+                        <input type='checkbox' name='remember_me' className='border-2 border-gray-150' id='' />
+                    </div>
+
+                    <div className='flex mb-2'>
+                        <p className='mr-1'>New Patient?</p>
+                        <Link to='/register_patient' className='text-blue-800 font-semibold hover:underline'>Create an account</Link>
+                    </div>
+
+                   
+                    <button type='submit' className='bg-green-500 text-white hover:shadow-md p-1 mb-3 hover:font-bold w-[280px]'>Login</button>
+                    <Link to='/' className='bg-red-500 text-white hover:shadow-md p-1 mb-3 hover:font-bold w-[280px]'>Cancel</Link>
+                  
+                    
+                </form>
             </div>
         );
     }
