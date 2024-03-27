@@ -17,7 +17,7 @@ export default function RegisteredDoctors(){
     const [doctors, setDoctors] = useState([]);
 
     const handleDelete= (id) => {
-        fetch(`http://127.0.0.1:5555/doctors/${id}`, {
+        fetch(`./doctors/${id}`, {
             method: "DELETE",
         })
         .then(() => {
@@ -29,7 +29,7 @@ export default function RegisteredDoctors(){
     };
 
     useEffect(()=>{
-        fetch("http://127.0.0.1:5555/doctors")
+        fetch("./doctors")
             .then((r) => r.json())
             .then((data) => {
                 setDoctors(data)
@@ -40,8 +40,8 @@ export default function RegisteredDoctors(){
     }, [])
     return (
         <div>
+            <p>Registered Doctors</p>
             <table class="table-auto w-full bg-white border border-gray-300">
-                <caption> DOCTORS </caption>
                 <thead>
                     <tr>
                         <th class="border border-gray-300 px-4 py-2">Doctor ID</th>

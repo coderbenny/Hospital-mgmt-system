@@ -1,8 +1,7 @@
-import logo from './logo.svg';
-import './App.css';
+// import './App.css';
+// import Login from "./Login"
 
-import Login from "./Login"
-import Admin from './Admin';
+import Admin from "./components/Admin";
 
 function App() {
 

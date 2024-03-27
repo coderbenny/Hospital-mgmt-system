@@ -17,7 +17,7 @@ export default function RegisteredPatients(){
     const [patients, setPatients] = useState([]);
 
     const handleDelete= (id) => {
-        fetch(`http://127.0.0.1:5555/patients/${id}`, {
+        fetch(`./patients/${id}`, {
             method: "DELETE",
         })
         .then(() => {
@@ -29,7 +29,7 @@ export default function RegisteredPatients(){
     };
 
     useEffect(()=>{
-        fetch("http://127.0.0.1:5555/patients")
+        fetch("./patients")
             .then((r) => r.json())
             .then((data) => {
                 setPatients(data)
@@ -40,8 +40,8 @@ export default function RegisteredPatients(){
     }, [])
     return (
         <div>
+            <p className="text-lg font-bold">Registered Patients</p>
             <table className="table-auto border-collapse border border-gray-400">
-                <caption> PATIENTS </caption>
                 <thead>
                     <tr>
                         <th className="border border-green-400 px-4 py-2">Patient ID</th>
