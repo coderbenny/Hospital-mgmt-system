@@ -123,14 +123,20 @@ class User(db.Model, SerializerMixin):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
     role = db.relationship('Role', back_populates='user')
 
-    @hybrid_property
-    def password_hash(self):
-        return self.password
+    def __init__(self, username, password, email, role_id):
+        self.username = username
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+        self.email = email
+        self.role_id = role_id
 
-    @password_hash.setter
-    def password_hash(self, password):
-        password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
-        self.password = password_hash.decode('utf-8')
+    # @hybrid_property
+    # def password_hash(self):
+    #     return self.password
+
+    # @password_hash.setter
+    # def password_hash(self, password):
+    #     password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
+    #     self.password = password_hash.decode('utf-8')
 
     def check_password(self, __password):
         return bcrypt.check_password_hash(self.password, __password.encode('utf-8'))

@@ -242,14 +242,17 @@ class Login(Resource):
         data = request.get_json()
         username = data.get('username')
         password = data.get('password')
+        email = data.get('email')
+        role_id = data.get('role_id')
 
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(email=email).first()
 
-        if user and bcrypt.check_password_hash(user.password, password.encode('utf-8')):
-            return {'message': 'Invalid username or password'}, 400
+        if user and bcrypt.check_password_hash(user.password, data.get('password')):
+            return {'message': 'Welcome back'}, 400
 
         session['user_id'] = user.id
-        return {'message': 'Logged in successfully'}, 200
+
+        # return {'message': user.password}, 200
 
 
 class Logout(Resource):
