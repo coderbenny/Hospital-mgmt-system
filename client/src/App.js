@@ -11,8 +11,6 @@ function App() {
                 <Route path="/doctor_view"></Route>
                 <Route path="/doctor_registration"></Route>
                 <Route path="/doctor_update"></Route>
-                <Route path="/bookappointments"></Route>
-                <Route path="/patientview"></Route>
             </Routes>
         </BrowserRouter>
     </div>
