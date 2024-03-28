@@ -1,3 +1,7 @@
+import React, { Component } from 'react';
+import axios from 'axios';
+import  {Link}  from 'react-router-dom';
+
 class RegisterPatient extends Component {
     state = {
         firstName: '',
@@ -60,8 +64,13 @@ class RegisterPatient extends Component {
                             <input type="password" className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" />
                         </div>
                         
-                        
-                        <button type="submit" className="bg-green-500 hover:bg-green-800 text-white font-bold py-2 px-4 rounded mt-4 focus:outline-none focus:shadow-outline">Register</button>
+                        <div className='flex justify-between mb-4 '>
+                            <div className='mt-4 text-center'>
+                                 <Link to="/patient_login" className='text-blue-800 font-semibold hover:underline' >Back to Login page</Link>
+                            </div>
+                        <button type="submit" className="bg-green-500 hover:bg-green-800 text-white font-bold py-2 px-4 rounded mt-4 focus:outline-none focus:shadow-outline" >Register</button>
+                        </div>
+                           
                     </form>
                 </div>
             </div>

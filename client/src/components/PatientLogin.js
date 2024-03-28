@@ -5,6 +5,7 @@ class PatientLogin extends Component {
     render() {
         return (
             <div className='flex justify-center mt-5'>
+                
                 <form action="" className='flex flex-col w-[500px] p-3 rounded-md shadow-md items-center'>
                     <h1 className='font-bold text-2xl mb-4'>Patient Login</h1>
 
@@ -28,7 +29,7 @@ class PatientLogin extends Component {
 
                    
                     <button type='submit' className='bg-green-500 text-white hover:shadow-md p-1 mb-3 hover:font-bold w-[280px]'>Login</button>
-                    <Link to='/' className='bg-red-500 text-white hover:shadow-md p-1 mb-3 hover:font-bold w-[280px]'>Cancel</Link>
+                    <Link to='/' className='bg-red-500 text-white hover:shadow-md p-1 mb-3 hover:font-bold w-[280px] flex justify-center'>Cancel</Link>
                   
                     
                 </form>

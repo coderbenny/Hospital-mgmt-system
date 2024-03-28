@@ -22,7 +22,7 @@ class AdminLogin extends Component {
                         <input type='checkbox' name='remember_me' className='border-2 border-gray-150' id='' />
                     </div>
                     <button type='submit' className='bg-green-500 text-white hover:shadow-md p-1 mb-3 hover:font-bold w-[280px]'>Login</button>
-                    <Link to='/' className='bg-red-500 text-white hover:shadow-md p-1 mb-3 hover:font-bold w-[280px]'>Cancel</Link>
+                    <Link to='/' className='bg-red-500 text-white hover:shadow-md p-1 mb-3 hover:font-bold w-[280px] flex justify-center'>Cancel</Link>
                 </form>
                 
             </div>
