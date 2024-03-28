@@ -1,30 +1,13 @@
-from flask import Flask, make_response,jsonify, request
-from flask_bcrypt import Bcrypt
+from flask import Flask, make_response,jsonify, request, session
 from sqlalchemy.exc import IntegrityError
-from flask_restful import Api, Resource
-from flask_migrate import Migrate
-from flask_cors import CORS
+from flask_restful import Resource
 from datetime import datetime
-from models.models import db, Doctor, Patient, Appointment, User
+from models.models import Doctor, Patient, Appointment, User
 # from flask.ext.bcrypt import Bcrypt
 # instantiate Bcrypt with app instance
 from config import app, db, api, bcrypt
 
 # Initialize app
-app = Flask(__name__)
-bcrypt = Bcrypt(app)
-app.config["SQLALCHEMY_DATABASE_URI"]='sqlite:///app.db'
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-bcrypt = Bcrypt(app)
-# Initialize API
-api = Api(app)
-CORS(app)
-
-migrate = Migrate(app, db)
-
-db.init_app(app)
-
 # Index Route
 class Index(Resource):
     def get(self):
@@ -200,48 +183,79 @@ class ViewAppointmentById(Resource):
 
 class Register(Resource):
     def post(self):
-        try: 
-            username = request.json.get('username', None)
-            password = request.json.get('password_hash', None)
-            email = request.json.get('email', None)
+        # try: 
+            data = request.get_json()
+            username = data.get('username')
+            password = data.get('password')
+            email = data.get('email')
+            role_id = data.get('role_id')
 
-            if not username:
-                return 'Missing username', 400
-                    
-            if not password:
-                return 'Missing password', 400
+            if not username or not password:
+                return {'message': 'Username and password are required'}, 400
+
+            existing_user = User.query.filter_by(email=email).first()
+
+            if existing_user:
+                return {'message': 'Username already exists'}, 400
             
-            if not email:
-                return 'Missing Email', 400
-                    
             hashed_password = bcrypt.generate_password_hash('password').decode('utf-8') 
 
-            user = User(username=username, password_hash=hashed_password, email=email)
+            user = User(username=username, password=hashed_password, email=email, role_id=role_id)
+            
             db.session.add(user)
             db.session.commit()
-        except IntegrityError: 
-            return 'User already exists'
-
+            return {'message': 'User created successfully'}, 201
+                    
+        # except IntegrityError: 
+        #     return 'User already exists'
+        
 class Admin(Resource):
-    def get(self):
-        return Admin
+    def get(self, id):
+        admin = Admin.query.filter_by(id=id).first()
+        response = make_response(jsonify(admin.to_dict()), 200)
+        return response
+    
+    def post(self):
+        data=request.get_json()
+        username = data.get('username')
+        password_hash = data.get('password_hash')
+        email = data.get('email')
 
+        admin = Admin.query.filter_by(username=username).first()
+
+        if not admin:
+            return {'message' : 'Invalid Admin'}, 400  
+
+        session['admin_id'] = admin.id
+
+class CheckSession(Resource):
+    def get(self):
+        if 'user_id' in session:
+            user_id = session['user_id']
+            user = User.query.get(user_id)
+            return jsonify(user.to_dict()), 200
+        else:
+            return {}, 204
+        
 class Login(Resource):
     def post(self):
-        # session['user_id'] = user.id
-        username = request.json.get('username')
-        password = request.json.get('password_hash')
-        email = request.json.get('email')
-        if not username or not password or not email:
-            return 'Invalid Login', 400     
-        
-        
-        user = User.query.filter_by(email=email).first()
-        if not user:
-            return 'User not Found', 400
-        
-        if not bcrypt.check_password_hash(user.password_hash, password):
-            return 'Invalid Password'
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+
+        user = User.query.filter_by(username=username).first()
+
+        if user and bcrypt.check_password_hash(user.password, password.encode('utf-8')):
+            return {'message': 'Invalid username or password'}, 400
+
+        session['user_id'] = user.id
+        return {'message': 'Logged in successfully'}, 200
+
+
+class Logout(Resource):
+    def delete(self):
+        session.pop('user_id', None)
+        return {}, 204
         
         
 api.add_resource(Index, '/')
@@ -251,9 +265,10 @@ api.add_resource(ViewPatient, '/patients')
 api.add_resource(ViewPatientById, '/patients/<int:id>')
 api.add_resource(ViewAppointment, '/appointments')
 api.add_resource(ViewAppointmentById, '/appointments/<int:id>')
-api.add_resource(Login, '/login')
-api.add_resource(Register, '/register')
-api.add_resource(Admin, '/admin')
+api.add_resource(Login, '/login', endpoint='login')
+api.add_resource(Register, '/register', endpoint='register')
+api.add_resource(Admin, '/admin', endpoint='admin')
+api.add_resource(Logout, '/logout', endpoint='logout')
 
 
 if __name__ == '__main__':
