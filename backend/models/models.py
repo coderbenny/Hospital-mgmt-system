@@ -1,19 +1,9 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData, ForeignKey
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy_serializer import SerializerMixin
-
 from sqlalchemy.ext.hybrid import hybrid_property
 
-metadata = MetaData(naming_convention={
-    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-})
+from config import db, bcrypt
 
-db = SQLAlchemy(metadata=metadata)
-
-# Models
-
-# Doctor
 class Doctor(db.Model, SerializerMixin):
     __tablename__ = 'doctors'
 
@@ -22,6 +12,7 @@ class Doctor(db.Model, SerializerMixin):
     speciality = db.Column(db.String)
     appointments=db.relationship("Appointment" , back_populates="doctor",cascade = 'all, delete-orphan')
     # user=db.relationship('User', backref='doctor')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
     def to_dict(self, visited=None, include_appointments=False):
@@ -65,7 +56,7 @@ class Patient(db.Model, SerializerMixin):
 
     appointments=db.relationship("Appointment" , back_populates="patient",cascade = 'all, delete-orphan')
 
-    # user=db.relationship('User', backref='patient')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def to_dict(self, visited=None, include_appointments=False):
         if visited is None:
@@ -122,19 +113,53 @@ class Appointment(db.Model, SerializerMixin):
             "doctor" : self.doctor.to_dict(visited)
         }
 
-#login and password authenticators
 class User(db.Model, SerializerMixin):
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
-    password_hash = db.Column(db.String, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
+    role = db.relationship('Role', back_populates='user')
 
-    # doctor=db.relationship('Doctor', backref='user')
-    # patient=db.relationship('Patient', backref='user')
+    @hybrid_property
+    def password_hash(self):
+        return self.password
 
-class SuperUser(db.Model, SerializerMixin):
+    @password_hash.setter
+    def password_hash(self, password):
+        password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
+        self.password = password_hash.decode('utf-8')
+
+    def check_password(self, __password):
+        return bcrypt.check_password_hash(self.password, __password.encode('utf-8'))
+
+    def authenticate(self, __password):
+        return self.check_password(__password)
+
+
+class Role(db.Model, SerializerMixin):
+    __tablename__ = 'roles'
+
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True, nullable=False)
-    email = db.Column(db.String, unique=True, nullable=False)
-    password_hash = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, unique=True, nullable=False)
+    user = db.relationship('User', back_populates='role')
+
+# Admin 
+class Admin(User):
+    __tablename__ = 'admins'
+    id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+
+    def to_dict(self, visited=None):
+        if visited is None:
+            visited = set()
+        if self in visited:
+            return {'id': self.id}  # or any other representation to break the recursion
+        visited.add(self)
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'role': self.role.name
+        }
