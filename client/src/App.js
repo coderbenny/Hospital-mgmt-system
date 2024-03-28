@@ -1,25 +1,20 @@
 import React from 'react'
 import {BrowserRouter,Routes,Route} from "react-router-dom"
-import PatientsView from './components/PatientsView'
-import BookAppointments from './components/BookAppointments'
-import  App from  './App'
-import PatientProfile from './components/PatientProfile'
-import NotFound from './components/NotFound'
-import Appointment from './components/Appointment'
+
+
 function App() {
   return (
-    <BrowserRouter>
-    <Routes>
-        <Route path="/" element ={<App/>}></Route>
-        <Route path="/patientview" element={<PatientsView />}/>
-        <Route path="/bookappointments" element={<BookAppointments/>}/>
-        <Route path="/patientsprofile" element={<PatientProfile/>}/>
-        <Route path="/patientappointments" element={<Appointment/>}/>
-        <Route path="*" element={<NotFound/>}/>
-    </Routes>
-      
-    </BrowserRouter>
+    <div className=''>
+        <BrowserRouter>
+            <h1 className='text-center font-bold text-2xl tracking-wide'>Hospital Management System</h1>
+            <Routes>
+                <Route path="/doctor_view"></Route>
+                <Route path="/doctor_registration"></Route>
+                <Route path="/doctor_update"></Route>
+            </Routes>
+        </BrowserRouter>
+    </div>
   )
 }
 
-export default App
+export default App;
