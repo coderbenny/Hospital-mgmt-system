@@ -1,38 +1,32 @@
-import React from 'react'
-import {BrowserRouter,Routes,Route} from "react-router-dom"
-import Home from './components/Home';
-import DoctorLogin from './components/DoctorLogin';
-import AdminLogin from './components/AdminLogin';
-import PatientLogin from './components/PatientLogin';
-import RegisterPatient from './components/RegisterPatient';
-import PatientsView from './components/PatientsView';
-import  Appointment from  './components/Appointment';
-import BookAppointments from './components/BookAppointments'
-import DoctorView from './components/DoctorView'
-import DoctorUpdate from './components/DoctorUpdate'
-import DoctorReg from './components/DoctorReg';
+// import './App.css';
+// import Login from "./Login"
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Admin from "./components/Admin";
 
-function App() {
+// function App() {
 
+//   return (
+
+//   );
+// }
+
+export default function App() {
   return (
-    <div className=''>
-        <BrowserRouter>
-            <Routes>
-                <Route path='/' element={<Home/>}></Route>
-                <Route path='doctor_login' element={<DoctorLogin/>}></Route>
-                <Route path='patient_login' element={<PatientLogin/>}></Route>
-                <Route path='admin_login' element={<AdminLogin/>}></Route>
-                <Route path='register_patient' element={<RegisterPatient/>}></Route>
-                <Route path="/doctor_view" element={<DoctorView/>}></Route>
-                <Route path="/doctor_registration" element={<DoctorReg/>}></Route>
-                <Route path="/doctor_update" element={<DoctorUpdate/>}></Route>
-                <Route path="/patientview" element={<PatientsView/>}></Route>
-                <Route path="/patientappointments" element={<Appointment/>}></Route>
-                <Route path="/bookappointments" element={<BookAppointments/>}></Route>
-            </Routes>
-        </BrowserRouter>
+    <div className="App">
+      <h1>Hospital Management System</h1>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/">
+            <Route path="admin" element={<Admin />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </div>
+  )
   )
 }
 
-export default App;
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+
