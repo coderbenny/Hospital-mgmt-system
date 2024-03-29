@@ -1,5 +1,6 @@
 import React from 'react'
 import {BrowserRouter,Routes,Route} from "react-router-dom"
+import DoctorView from './components/DoctorView';
 import DoctorReg from './components/DoctorReg';
 import DoctorUpdate from './components/DoctorUpdate';
 
@@ -10,7 +11,7 @@ function App() {
         <BrowserRouter>
             <h1 className='text-center font-bold text-2xl tracking-wide'>Hospital Management System</h1>
             <Routes>
-                <Route path="/doctor_view"></Route>
+                <Route path="/doctor_view" element={<DoctorView/>}></Route>
                 <Route path="/doctor_registration" element={<DoctorReg/>}></Route>
                 <Route path="/doctor_update" element={<DoctorUpdate/>}></Route>
             </Routes>
