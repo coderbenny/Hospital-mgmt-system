@@ -1,4 +1,5 @@
 import React from "react"
+import { NavLink } from "react-router-dom";
 import DrAptRequests from "./DrAptRequests";
 import DrFixedApts from "./DrFixedApts";
 
@@ -8,8 +9,8 @@ function DoctorView(){
                 <h1 className="font-bold mr-3 text-2xl text-center">Welcome John Doe</h1>
             
                 <div className="flex">
-                    <button className="p-1 bg-green-500 text-white rounded-md mr-2 cursor-pointer hover:font-bold">Update Profile</button>
-                    <button className="p-1 bg-red-500 text-white rounded-md cursor-pointer hover:font-bold">Logout</button>
+                    <NavLink path to="/doctor_update" className="p-1 bg-green-500 text-white rounded-md mr-2 cursor-pointer hover:font-bold">Update Profile</NavLink>
+                    <NavLink path to="/doctor_login" className="p-1 bg-red-500 text-white rounded-md cursor-pointer hover:font-bold">Logout</NavLink>
                 </div>
             
 
