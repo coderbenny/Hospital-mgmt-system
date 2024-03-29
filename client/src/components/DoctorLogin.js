@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom';
 
 class DoctorLogin extends Component {
     render() {
+
+
         return (
+        
             <div className='flex justify-center mt-5'>
                  
                 <form action='' className='flex flex-col w-[500px] p-3 rounded-md shadow-md items-center'>
