@@ -1,5 +1,6 @@
 import React from 'react'
 import {BrowserRouter,Routes,Route} from "react-router-dom"
+import DoctorReg from './components/DoctorReg';
 
 
 function App() {
@@ -9,7 +10,7 @@ function App() {
             <h1 className='text-center font-bold text-2xl tracking-wide'>Hospital Management System</h1>
             <Routes>
                 <Route path="/doctor_view"></Route>
-                <Route path="/doctor_registration"></Route>
+                <Route path="/doctor_registration" element={<DoctorReg/>}></Route>
                 <Route path="/doctor_update"></Route>
             </Routes>
         </BrowserRouter>
