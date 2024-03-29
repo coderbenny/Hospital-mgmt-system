@@ -6,7 +6,7 @@ import DrFixedApts from "./DrFixedApts";
 function DoctorView(){
     return(
         <div className="flex flex-col justify-center items-center mt-5">
-                <h1 className="font-bold mr-3 text-2xl text-center">Welcome John Doe</h1>
+                <h1 className="font-bold mr-3 mb-2 tracking-wider text-xl text-center">Welcome John Doe</h1>
             
                 <div className="flex">
                     <NavLink path to="/doctor_update" className="p-1 bg-green-500 text-white rounded-md mr-2 cursor-pointer hover:font-bold">Update Profile</NavLink>
