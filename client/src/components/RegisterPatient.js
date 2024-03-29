@@ -22,7 +22,7 @@ class RegisterPatient extends Component {
     handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/api/register_patient', this.state);
+            const response = await axios.post('/patients', this.state);
             console.log(response.data); // Assuming the backend returns some data
             // Reset state or perform any other action upon successful registration
         } catch (error) {
