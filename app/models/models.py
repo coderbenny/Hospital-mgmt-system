@@ -1,17 +1,8 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData, ForeignKey
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy_serializer import SerializerMixin
+from sqlalchemy.ext.hybrid import hybrid_property
 
-metadata = MetaData(naming_convention={
-    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-})
-
-db = SQLAlchemy(metadata=metadata)
-
-# Models
-
-# Doctor
+from config import db, bcrypt
 
 class Doctor(db.Model, SerializerMixin):
     __tablename__ = 'doctors'
@@ -19,8 +10,9 @@ class Doctor(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name= db.Column(db.String,unique=True, nullable=False)
     speciality = db.Column(db.String)
-
     appointments=db.relationship("Appointment" , back_populates="doctor",cascade = 'all, delete-orphan')
+    # user=db.relationship('User', backref='doctor')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
     def to_dict(self, visited=None, include_appointments=False):
@@ -50,6 +42,9 @@ class Doctor(db.Model, SerializerMixin):
             raise ValueError("Invalid speciality")
         return  speciality
 
+    def __repr__(self):
+        return f'Doctor {self.name} | ID {self.id}'
+
 # Patient
 class Patient(db.Model, SerializerMixin):
     __tablename__ = 'patients'
@@ -61,6 +56,7 @@ class Patient(db.Model, SerializerMixin):
 
     appointments=db.relationship("Appointment" , back_populates="patient",cascade = 'all, delete-orphan')
 
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def to_dict(self, visited=None, include_appointments=False):
         if visited is None:
@@ -90,6 +86,7 @@ class Patient(db.Model, SerializerMixin):
             raise ValueError("Invalid age")
         return  age
 
+#Appointments
 class Appointment(db.Model, SerializerMixin):
     __tablename__ = 'appointments'
 
@@ -98,8 +95,6 @@ class Appointment(db.Model, SerializerMixin):
     doctor_id = db.Column(db.Integer, db.ForeignKey('doctors.id'), nullable=False)  
     date = db.Column(db.DateTime, unique=True, nullable=False)
     # Time=db.Column(db.DateTime,nullable=False)
-
-
     patient=relationship("Patient", back_populates= "appointments")
     doctor=relationship("Doctor", back_populates="appointments")
 
@@ -118,5 +113,50 @@ class Appointment(db.Model, SerializerMixin):
             "doctor" : self.doctor.to_dict(visited)
         }
 
-    
+class User(db.Model, SerializerMixin):
+    __tablename__ = 'users'
 
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
+    role = db.relationship('Role', back_populates='user')
+
+    def __init__(self, username, password, email, role_id):
+        self.username = username
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+        self.email = email
+        self.role_id = role_id
+
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password, password)
+
+    def authenticate(self, password):
+        return self.check_password(password)
+
+
+class Role(db.Model, SerializerMixin):
+    __tablename__ = 'roles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+    user = db.relationship('User', back_populates='role')
+
+# Admin 
+class Admin(User):
+    __tablename__ = 'admins'
+    id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+
+    def to_dict(self, visited=None):
+        if visited is None:
+            visited = set()
+        if self in visited:
+            return {'id': self.id}  # or any other representation to break the recursion
+        visited.add(self)
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'role': self.role.name
+        }

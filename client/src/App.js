@@ -11,6 +11,7 @@ function App() {
                 <Route path="/doctor_view"></Route>
                 <Route path="/doctor_registration"></Route>
                 <Route path="/doctor_update"></Route>
+                <Route path="admin" element={<Admin />} />
             </Routes>
         </BrowserRouter>
     </div>

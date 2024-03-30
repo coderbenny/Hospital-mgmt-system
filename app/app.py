@@ -1,31 +1,19 @@
-from flask import Flask, make_response,jsonify, request
-from flask_restful import Api, Resource
-from flask_migrate import Migrate
-from flask_cors import CORS
+from flask import Flask, make_response,jsonify, request, session
+from sqlalchemy.exc import IntegrityError
+from flask_restful import Resource
 from datetime import datetime
-from models.models import db, Doctor, Patient, Appointment
+from models.models import Doctor, Patient, Appointment, User
+# from flask.ext.bcrypt import Bcrypt
+# instantiate Bcrypt with app instance
+from config import app, db, api, bcrypt
 
 # Initialize app
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"]='sqlite:///app.db'
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-# Initialize API
-api = Api(app)
-
-migrate = Migrate(app, db)
-
-db.init_app(app)
-
 # Index Route
 class Index(Resource):
-
     def get(self):
-        return '<h1>Hospital Mgmt API Index Page</h1>'
-
+        return 'Hospital Mgmt API Index Page'
 
 class ViewDoctor(Resource):
-
     def get(self):
         try:
             doctors = Doctor.query.all()
@@ -49,6 +37,7 @@ class ViewDoctor(Resource):
         except:
             db.session.rollback()
             return make_response(jsonify({'error':"Post  Failed"}),500)
+        
 class ViewDoctorById(Resource):
 
     def get(self,id):
@@ -76,7 +65,6 @@ class ViewDoctorById(Resource):
         )
 
         return response
-
 
 class ViewPatient(Resource):
 
@@ -191,8 +179,88 @@ class ViewAppointmentById(Resource):
         )
 
         return response
+
+class Register(Resource):
+    def post(self):
+        # try: 
+            data = request.get_json()
+            username = data.get('username')
+            password = data.get('password')
+            email = data.get('email')
+            role_id = data.get('role_id')
+
+            if not username or not password:
+                return {'message': 'Username and password are required'}, 400
+
+            existing_user = User.query.filter_by(email=email).first()
+
+            if existing_user:
+                return {'message': 'Username already exists'}, 400
+            
+            hashed_password = bcrypt.generate_password_hash('password').decode('utf-8') 
+
+            user = User(username=username, password=hashed_password, email=email, role_id=role_id)
+            
+            db.session.add(user)
+            db.session.commit()
+            return {'message': 'User created successfully'}, 201
+                    
+        # except IntegrityError: 
+        #     return 'User already exists'
+        
+class Admin(Resource):
+    def get(self, id):
+        admin = Admin.query.filter_by(id=id).first()
+        response = make_response(jsonify(admin.to_dict()), 200)
+        return response
     
-    
+    def post(self):
+        data=request.get_json()
+        username = data.get('username')
+        password_hash = data.get('password_hash')
+        email = data.get('email')
+
+        admin = Admin.query.filter_by(username=username).first()
+
+        if not admin:
+            return {'message' : 'Invalid Admin'}, 400  
+
+        session['admin_id'] = admin.id
+
+class CheckSession(Resource):
+    def get(self):
+        if 'user_id' in session:
+            user_id = session['user_id']
+            user = User.query.get(user_id)
+            return jsonify(user.to_dict()), 200
+        else:
+            return {}, 204
+        
+class Login(Resource):
+    def post(self):
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+        role_id=data.get('role_id')
+
+        user = User.query.filter_by(email=email).first()
+
+        if user and user.authenticate(password):
+            session['user_id'] = user.id
+            return {'message': 'Login successful'}, 200
+        else:
+            return {'message': 'Invalid credentials'}, 401
+
+        # session['user_id'] = user.id
+
+        # return {'message': user.password}, 200
+
+
+class Logout(Resource):
+    def delete(self):
+        session.pop('user_id', None)
+        return {}, 204
+        
         
 api.add_resource(Index, '/')
 api.add_resource(ViewDoctor, '/doctors')
@@ -201,20 +269,10 @@ api.add_resource(ViewPatient, '/patients')
 api.add_resource(ViewPatientById, '/patients/<int:id>')
 api.add_resource(ViewAppointment, '/appointments')
 api.add_resource(ViewAppointmentById, '/appointments/<int:id>')
-
-
-
-
-# Patient
-
-
-# Doctor
-
-
-# Doctor_Patient
-
-
-# Apointments
+api.add_resource(Login, '/login', endpoint='login')
+api.add_resource(Register, '/register', endpoint='register')
+api.add_resource(Admin, '/admin', endpoint='admin')
+api.add_resource(Logout, '/logout', endpoint='logout')
 
 
 if __name__ == '__main__':
