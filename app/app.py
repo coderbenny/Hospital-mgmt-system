@@ -93,22 +93,27 @@ class ViewPatient(Resource):
             return make_response({"error":"Patients not Found/Exist"},404)
     
     def post(self):
-        name= request.get_json()['name']
-        age= request.get_json()['age']
-        disease = request.get_json()['disease']
 
-        new_patient=Patient(
-            name=name,
-            age=age,
-            disease = disease
-        )
         try:
+            # name= request.get_json()['name']
+            data = request.get_json()
+            # Extract required fields from the request data
+            name = data.get('firstName') + " " + data.get('lastName')  # Combine first name and last name
+            age= request.get_json()['age']
+            disease = request.get_json()['disease']
+
+            new_patient=Patient(
+                name=name,
+                age=age,
+                disease = disease
+            )
+        
             db.session.add(new_patient)
             db.session.commit()
             return make_response(jsonify(new_patient.to_dict(include_appointments=True)),200)
         except:
             db.session.rollback()
-            return make_response(jsonify({'error':"Post  Failed"}),500)
+            return make_response(jsonify({'error':"Post Failed"}),500)
         
 class ViewPatientById(Resource):
 
@@ -204,21 +209,6 @@ api.add_resource(ViewPatient, '/patients')
 api.add_resource(ViewPatientById, '/patients/<int:id>')
 api.add_resource(ViewAppointment, '/appointments')
 api.add_resource(ViewAppointmentById, '/appointments/<int:id>')
-
-
-
-
-# Patient
-
-
-# Doctor
-
-
-# Doctor_Patient
-
-
-# Apointments
-
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
