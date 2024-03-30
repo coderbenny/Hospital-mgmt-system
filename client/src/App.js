@@ -5,6 +5,9 @@ import DoctorLogin from './components/DoctorLogin';
 import AdminLogin from './components/AdminLogin';
 import PatientLogin from './components/PatientLogin';
 import RegisterPatient from './components/RegisterPatient';
+import PatientsView from './components/PatientsView';
+import  Appointment from  './components/Appointment';
+import BookAppointments from './components/BookAppointments'
 
 function App() {
   return (
@@ -19,6 +22,9 @@ function App() {
                 <Route path="/doctor_view"></Route>
                 <Route path="/doctor_registration"></Route>
                 <Route path="/doctor_update"></Route>
+                <Route path="/patientview" element={<PatientsView/>}></Route>
+                <Route path="/patientappointments" element={<Appointment/>}></Route>
+                <Route path="/bookappointments" element={<BookAppointments/>}></Route>
             </Routes>
         </BrowserRouter>
     </div>
