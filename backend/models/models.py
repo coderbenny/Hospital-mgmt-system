@@ -1,6 +1,8 @@
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.hybrid import hybrid_property
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from config import db, bcrypt
 
@@ -119,30 +121,44 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
-    password = db.Column(db.String, nullable=False)
+    _password_hash = db.Column(db.String(250), nullable=False, unique=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
     role = db.relationship('Role', back_populates='user')
 
-    def __init__(self, username, password, email, role_id):
+    serialize_rules = {
+        "id", "username", "email", 
+        "-role_id","-_password_hash"
+    }
+
+    def __init__(self, username, _password_hash, email, role_id):
         self.username = username
-        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+        self._password_hash = bcrypt.generate_password_hash(_password_hash).decode('utf-8')
         self.email = email
         self.role_id = role_id
+    
+    @hybrid_property
+    def password(self):
+        return self._password_hash
 
-    # @hybrid_property
-    # def password_hash(self):
-    #     return self.password
+    @password.setter
+    def password_hash(self, raw_password):
+        password_hash = bcrypt.generate_password_hash(
+            raw_password.encode('utf-8'))
+        self._password_hash = password_hash.decode('utf-8')
 
-    # @password_hash.setter
-    # def password_hash(self, password):
-    #     password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
-    #     self.password = password_hash.decode('utf-8')
+    def authenticate(self, raw_password):
+        return bcrypt.check_password_hash(
+            self._password_hash, raw_password.encode('utf-8'))
 
-    def check_password(self, __password):
-        return bcrypt.check_password_hash(self.password, __password.encode('utf-8'))
+    def __repr__(self):
+        return f'<User {self.username}>'
 
-    def authenticate(self, __password):
-        return self.check_password(__password)
+    @validates("email")
+    def validate_email(email):
+        if "@" not in email:
+            raise ValueError("Invalid email")
+        
+        return email
 
 
 class Role(db.Model, SerializerMixin):
