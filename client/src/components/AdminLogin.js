@@ -2,6 +2,35 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 class AdminLogin extends Component {
+    handleSubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = {
+            username: formData.get('username'),
+            password: formData.get('password'),
+        };
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                // Login successful, redirect or show success message
+                console.log('Login successful');
+            } else {
+                // Login failed, show error message
+                console.error(result.message);
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    };
+
     render() {
         return (
             <div className='flex justify-center mt-5'>
@@ -31,4 +60,3 @@ class AdminLogin extends Component {
 }
 
 export default AdminLogin;
-

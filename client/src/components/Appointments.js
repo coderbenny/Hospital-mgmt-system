@@ -28,23 +28,23 @@ export default function Appointments(){
 
     return (
         <div>
-            <p>Appointments</p>
             <table>
+                <caption> APPOINTMENTS </caption>
                 <thead>
                     <tr>
-                        <th>Appointment ID</th>
-                        <th>Date</th>
-                        <th>Patient Id</th>
-                        <th>Doctor Id</th>
+                        <th className="px-4 py-2 border-b">Appointment ID</th>
+                        <th className="px-4 py-2 border-b">Doctor Id</th>
+                        <th className="px-4 py-2 border-b">Patient Id</th>
+                        <th className="px-4 py-2 border-b">Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     {appointments.map((appointment) => (
                         <tr key={appointment.id}>
-                            <td>{appointment.id}</td>
-                            <td>{appointment.date}</td>
-                            <td>{appointment.patient_id}</td>
-                            <td>{appointment.doctor_id}</td>
+                            <td className="px-4 py-2 border-b">{appointment.id}</td>
+                            <td className="px-4 py-2 border-b">{appointment.date}</td>
+                            <td className="px-4 py-2 border-b">{appointment.patient_id}</td>
+                            <td className="px-4 py-2 border-b">{appointment.doctor_id}</td>
                             <td>
                                 <button onClick={() => handleDelete(appointment.id)}>Delete</button>
                             </td>
