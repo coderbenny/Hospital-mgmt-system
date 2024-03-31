@@ -1,4 +1,4 @@
-from flask import Flask, make_response,jsonify, request, session
+from flask import Flask, make_response,jsonify, request, session, url_for, flash
 from sqlalchemy.exc import IntegrityError
 from flask_restful import Resource
 from datetime import datetime
@@ -182,31 +182,33 @@ class ViewAppointmentById(Resource):
 
 class Register(Resource):
     def post(self):
-        # try: 
+        try: 
             data = request.get_json()
-            username = data.get('username')
-            password = data.get('password')
-            email = data.get('email')
-            role_id = data.get('role_id')
+            username = data['username']
+            password = data['_password_hash']
+            email = data['email']
+            role_id = data['role_id']
 
             if not username or not password:
-                return {'message': 'Username and password are required'}, 400
-
+                return {'message': 'Username, Password and Email are required'}
+            
+            #existing user check
             existing_user = User.query.filter_by(email=email).first()
-
             if existing_user:
-                return {'message': 'Username already exists'}, 400
-            
-            hashed_password = bcrypt.generate_password_hash('password').decode('utf-8') 
-
-            user = User(username=username, password=hashed_password, email=email, role_id=role_id)
-            
-            db.session.add(user)
+                return {'message' : 'Username already exists'}
+                
+            new_user = User(
+                username=username, 
+                _password_hash=password, 
+                email=email, role_id=role_id
+            )
+            db.session.add(new_user)
             db.session.commit()
-            return {'message': 'User created successfully'}, 201
-                    
-        # except IntegrityError: 
-        #     return 'User already exists'
+
+            return make_response(jsonify(new_user.to_dict()), 201)
+        except ValueError:
+            return make_response(jsonify({"Invalid Email"}), 400)
+
         
 class Admin(Resource):
     def get(self, id):
@@ -216,9 +218,9 @@ class Admin(Resource):
     
     def post(self):
         data=request.get_json()
-        username = data.get('username')
-        password_hash = data.get('password_hash')
-        email = data.get('email')
+        username = data['username']
+        password = data['_password_hash']
+        email = data['email']
 
         admin = Admin.query.filter_by(username=username).first()
 
@@ -239,26 +241,42 @@ class CheckSession(Resource):
 class Login(Resource):
     def post(self):
         data = request.get_json()
-        username = data.get('username')
-        password = data.get('password')
-        email = data.get('email')
-        role_id = data.get('role_id')
+        email = data['email']
+        password = data['_password_hash']
+        username = data['username']
 
         user = User.query.filter_by(email=email).first()
 
-        if user and bcrypt.check_password_hash(user.password, data.get('password')):
-            return {'message': 'Welcome back'}, 400
-
-        session['user_id'] = user.id
+        if user:
+            if user.authenticate(password):
+                session['user_id'] = user.id
+                return make_response(jsonify({'message': 'Login successful'}), 200)
+            else:
+                return make_response(jsonify({'message': 'Invalid credentials'}), 400)
+        else:
+            return make_response(jsonify({"message" : "Email not recognised"}), 400)
 
         # return {'message': user.password}, 200
-
 
 class Logout(Resource):
     def delete(self):
         session.pop('user_id', None)
-        return {}, 204
-        
+        return {'Logged out'}, 204
+
+class Users(Resource):
+    def get(self):
+        users = User.query.all()
+        list_users = []
+        for user in users:
+            user_dict = {
+                "Id" : user.id,
+                "User Name": user.username,
+                "Email" : user.email,
+                "Role Id" : user.role_id,
+            }   
+            list_users.append(user_dict)
+        return make_response(jsonify(list_users), 200)
+
         
 api.add_resource(Index, '/')
 api.add_resource(ViewDoctor, '/doctors')
@@ -271,6 +289,7 @@ api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Register, '/register', endpoint='register')
 api.add_resource(Admin, '/admin', endpoint='admin')
 api.add_resource(Logout, '/logout', endpoint='logout')
+api.add_resource(Users, '/users')
 
 
 if __name__ == '__main__':
