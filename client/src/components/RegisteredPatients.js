@@ -40,8 +40,8 @@ export default function RegisteredPatients(){
     }, [])
     return (
         <div>
-            <p className="text-lg font-bold">Registered Patients</p>
             <table className="table-auto border-collapse border border-gray-400">
+                <caption> PATIENTS </caption>
                 <thead>
                     <tr>
                         <th className="border border-green-400 px-4 py-2">Patient ID</th>

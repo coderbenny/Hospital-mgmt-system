@@ -40,8 +40,8 @@ export default function RegisteredDoctors(){
     }, [])
     return (
         <div>
-            <p>Registered Doctors</p>
             <table class="table-auto w-full bg-white border border-gray-300">
+                <caption> DOCTORS </caption>
                 <thead>
                     <tr>
                         <th class="border border-gray-300 px-4 py-2">Doctor ID</th>
