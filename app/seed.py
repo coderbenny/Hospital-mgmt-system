@@ -70,7 +70,7 @@ with app.app_context():
     print('adding usernames')
     users = [User(
         username=faker.name(),
-        password=faker.password(),
+        _password_hash=faker.password(),
         email=faker.email(),
         role_id=random.randint(1, 2)
     ) for i in range(20)]
