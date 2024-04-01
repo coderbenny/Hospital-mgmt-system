@@ -153,12 +153,6 @@ class User(db.Model, SerializerMixin):
     def __repr__(self):
         return f'<User {self.username}>'
 
-    @validates("email")
-    def validate_email(email):
-        if "@" not in email:
-            raise ValueError("Invalid email")
-        
-        return email
 
 
 class Role(db.Model, SerializerMixin):

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 class AdminLogin extends Component {
+    
     handleSubmit = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -9,6 +11,13 @@ class AdminLogin extends Component {
             username: formData.get('username'),
             password: formData.get('password'),
         };
+
+        let navigate = useNavigate();
+        const routeChange = () => {
+          let path = '/admin'
+          navigate(path);
+        }
+        
         try {
             const response = await fetch('/login', {
                 method: 'POST',
@@ -21,7 +30,8 @@ class AdminLogin extends Component {
 
             if (response.ok) {
                 // Login successful, redirect or show success message
-                console.log('Login successful');
+                console.log('Login successful')
+                routeChange()
             } else {
                 // Login failed, show error message
                 console.error(result.message);

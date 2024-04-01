@@ -1,4 +1,4 @@
-from flask import Flask, make_response,jsonify, request, session, url_for, flash
+from flask import Flask, make_response,jsonify, request, session, redirect
 from sqlalchemy.exc import IntegrityError
 from flask_restful import Resource
 from datetime import datetime
@@ -244,19 +244,26 @@ class Login(Resource):
         email = data['email']
         password = data['_password_hash']
         username = data['username']
+        
+        admin = Admin.query.filter_by(username=username).first()
 
-        user = User.query.filter_by(email=email).first()
-
-        if user:
-            if user.authenticate(password):
-                session['user_id'] = user.id
-                return make_response(jsonify({'message': 'Login successful'}), 200)
+        if admin:
+            if admin.authenticate(password):
+                session['admin_id'] = admin.id
+                return redirect('/admin')
             else:
-                return make_response(jsonify({'message': 'Invalid credentials'}), 400)
+                return make_response(jsonify({'message': 'Invalid admin credentials'}), 400)
         else:
-            return make_response(jsonify({"message" : "Email not recognised"}), 400)
-
-        # return {'message': user.password}, 200
+            # If the email is not in the admin table, check the user table
+            user = User.query.filter_by(email=email).first()
+            if user:
+                if user.authenticate(password):
+                    session['user_id'] = user.id
+                    return make_response(jsonify({'message': 'User login successful'}), 200)
+                else:
+                    return make_response(jsonify({'message': 'Invalid user credentials'}), 400)
+            else:
+                return make_response(jsonify({"message" : "Email not recognised"}), 400)
 
 class Logout(Resource):
     def delete(self):
