@@ -1,23 +1,33 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Admin from "./components/Admin";
+import { BrowserRouter, Routes, Route, redirect, useNavigate } from "react-router-dom";
 import AdminLogin from "./components/AdminLogin";
 
 
-export default function App() {
+function Root() {
+  let navigate = useNavigate();
+  const routeChange = () => {
+    let path = '/login'
+    navigate(path);
+  }
   return (
     <div className="App">
-      <Link to="/login">Login</Link>
-      <BrowserRouter>
+      <button onClick={routeChange}>AdminLogin</button>
         <Routes>
           <Route path="/">
             <Route path="login" element={<AdminLogin/>}/>
           </Route>
         </Routes>
-      </BrowserRouter>
     </div>
   )
+  )
+}
+
+export default function App(){
+  return (
+    <BrowserRouter>
+      <Root/>
+    </BrowserRouter>
   )
 }
 
