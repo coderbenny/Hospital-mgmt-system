@@ -1,0 +1,49 @@
+.circle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 400px; /* Adjust this to your liking */
+    height: 400px; /* Adjust this to your liking */
+  }
+  
+  .circle button {
+    position: absolute;
+  }
+  
+  .circle button:nth-child(1) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg) translateY(-200px);
+  }
+  
+  .circle button:nth-child(2) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg) translateY(-200px);
+  }
+  
+  .circle button:nth-child(3) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(30deg) translateY(-200px);
+  }
+  
+  .circle button:nth-child(4) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(90deg) translateY(-200px);
+  }
+  
+  .circle button:nth-child(5) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(150deg) translateY(-200px);
+  }
+  .circle button:nth-child(6) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(210deg) translateY(-200px);
+  }
+  
