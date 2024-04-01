@@ -3,6 +3,7 @@ import httpsClient from './httpsClient';
 
 function Appointment() {
   const [appointments, setAppointments] = useState([]);
+  const [search, setSearch]=useState("");
 
   useEffect(() => {
     getAppointments();
@@ -54,12 +55,33 @@ function Appointment() {
     getAppointments();
   }, []);
 
-  
+  const handleSearch = () => {
+    const filteredAppointments = appointments.filter((appointment) =>
+      appointment.patient_id.toString().toLowerCase().includes(search.toLowerCase())
+    );
+    return filteredAppointments;
+  };
 
   const Home = () =>{window.location.href='http://localhost:3000/patientview'}
   return (
     <div className='flex flex-col justify-center items-center'>
       <h3 className='font-bold text-center mb-4 text-xl'>Your Appointments</h3>
+      <nav style={{ marginBottom: '15px' }}>
+        <input 
+        className='rounded-full border-2 border-green-500 focus:outline-none shadow-xl bg-opacity-50 text-center ' 
+        type='text' 
+        name='search' 
+        placeholder='Patient id' 
+        autoComplete='off' 
+        value={search} 
+        onChange={(e)=>setSearch(e.target.value)} 
+        />
+        {/* <button className='bg-green-500 rounded-full' 
+        style={{ marginLeft: '20px' }} 
+        onClick={handleSearch}>
+                    🔎︎
+                    </button> */}
+      </nav>
       <div className="overflow-x-auto rounded-md shadow-xl bg-opacity-50">
         <table className="table-auto w-full">
           <thead>
@@ -73,7 +95,7 @@ function Appointment() {
             </tr>
           </thead>
           <tbody>
-            {appointments.map((appointment, index) => (
+            {handleSearch().map((appointment, index) => (
               <tr key={index} className="text-black-900 text-center ">
                 <td className="px-4 py-2 border-b">{appointment.id}</td>
                 <td className="px-4 py-2 border-b">{appointment.patient_id}</td>
