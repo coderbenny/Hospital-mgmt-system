@@ -46,4 +46,8 @@
     left: 50%;
     transform: translate(-50%, -50%) rotate(210deg) translateY(-200px);
   }
+  .button-rotate {
+    transform: rotate(-90deg); /* Rotate the buttons by -90 degrees to make labels straight on screen */
+    writing-mode: vertical-rl; /* Set the writing mode to vertical */
+  }
   

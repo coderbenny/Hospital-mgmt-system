@@ -21,10 +21,42 @@ function Appointment() {
     }
   };
 
+
+  const deleteAppointment = async(id) =>{
+    const resp = await httpsClient.delete(`http://127.0.0.1:5555/appointments/${id}`)
+    getAppointments()
+    console.log(resp)
+  }
+
+  const HandleDelete = (id) =>{
+    if(window.confirm('Are you sure ?')){
+      deleteAppointment(id);
+    }
+  };
+
+  const patchAppointment = async (id ,updatedappointment) =>{
+    try{
+      const resp = await httpsClient.patch(`http://127.0.0.1:5555/appointments/${id}`,updatedappointment);
+      console.log(resp)
+      getAppointments(); 
+    }catch(error){
+      if (error && error.response && error.response.status === 401) {
+        alert("Invalid Credentials");
+      } else {
+        console.error("An unexpected error occurred:", error);
+        alert(`$Update Failed ${error}`);
+      }
+    }
+  }
+
+
   useEffect(() => {
     getAppointments();
   }, []);
 
+  
+
+  const Home = () =>{window.location.href='http://localhost:3000/patientview'}
   return (
     <div className='flex flex-col justify-center items-center'>
       <h3 className='font-bold text-center mb-4 text-xl'>Your Appointments</h3>
@@ -36,19 +68,38 @@ function Appointment() {
               <th className="px-4 py-2 border-b" >Patient ID</th>
               <th className="px-4 py-2 border-b">Doctor ID</th>
               <th className="px-4 py-2 boarder-b">Appointment Date</th>
+              <th className="px-4 py-2 boarder-b">Update</th>
+              <th className="px-4 py-2 boarder-b">Delete</th>
             </tr>
           </thead>
           <tbody>
             {appointments.map((appointment, index) => (
-              <tr key={index} className="text-black-900 ">
+              <tr key={index} className="text-black-900 text-center ">
                 <td className="px-4 py-2 border-b">{appointment.id}</td>
                 <td className="px-4 py-2 border-b">{appointment.patient_id}</td>
                 <td className="px-4 py-2 border-b">{appointment.doctor_id}</td>
-                <td className="px-4 py-2 border-b">{appointment.date}</td>
+                <td className="px-4 py-2 border-b">{appointment.date}</td> 
+                
+                <td className="px-4 py-2 border-b"><button onClick={()=>patchAppointment(appointment.id)}>
+                  ✎
+                  </button>
+                  </td>
+                <td className="px-4 py-2 border-b"><button onClick={()=>HandleDelete(appointment.id)}>
+                  🚮
+                  </button>
+                  </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <button 
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+                    onClick={Home}
+                    type="submit"
+                    style={{ marginLeft: '300px' }}
+                >
+                  🏠 
+        </button>
       </div>
     </div>
   );
