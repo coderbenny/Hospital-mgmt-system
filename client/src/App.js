@@ -8,6 +8,9 @@ import RegisterPatient from './components/RegisterPatient';
 import PatientsView from './components/PatientsView';
 import  Appointment from  './components/Appointment';
 import BookAppointments from './components/BookAppointments'
+import DoctorView from './components/DoctorView'
+import DoctorUpdate from './components/DoctorUpdate'
+import DoctorReg from './components/DoctorReg';
 
 function App() {
   return (
@@ -19,9 +22,9 @@ function App() {
                 <Route path='patient_login' element={<PatientLogin/>}></Route>
                 <Route path='admin_login' element={<AdminLogin/>}></Route>
                 <Route path='register_patient' element={<RegisterPatient/>}></Route>
-                <Route path="/doctor_view"></Route>
-                <Route path="/doctor_registration"></Route>
-                <Route path="/doctor_update"></Route>
+                <Route path="/doctor_view" element={<DoctorView/>}></Route>
+                <Route path="/doctor_registration" element={<DoctorReg/>}></Route>
+                <Route path="/doctor_update" element={<DoctorUpdate/>}></Route>
                 <Route path="/patientview" element={<PatientsView/>}></Route>
                 <Route path="/patientappointments" element={<Appointment/>}></Route>
                 <Route path="/bookappointments" element={<BookAppointments/>}></Route>
