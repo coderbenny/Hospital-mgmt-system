@@ -4,7 +4,7 @@ export default function Appointments(){
     const [appointments, setAppointments] = useState([]);
 
     const handleDelete= (id) => {
-        fetch(`./appointments/${id}`, {
+        fetch(`http://127.0.0.1:5555/appointments/${id}`, {
             method: "DELETE",
         })
         .then(() => {
@@ -16,7 +16,7 @@ export default function Appointments(){
     };
 
     useEffect(() => {
-        fetch("./appointments")
+        fetch("http://127.0.0.1:5555/appointments")
             .then((response) => response.json())
             .then((data) => {
                 setAppointments(data);
