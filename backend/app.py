@@ -2,7 +2,7 @@ from flask import Flask, make_response,jsonify, request, session, redirect
 from sqlalchemy.exc import IntegrityError
 from flask_restful import Resource
 from datetime import datetime
-from models.models import Doctor, Patient, Appointment, User
+from models.models import Doctor, Patient, Appointment, User, Admin
 # from flask.ext.bcrypt import Bcrypt
 # instantiate Bcrypt with app instance
 from config import app, db, api, bcrypt
@@ -211,10 +211,10 @@ class Register(Resource):
             return make_response(jsonify({"Invalid Email"}), 400)
 
         
-class Admin(Resource):
+class Admins(Resource):
     def get(self, id):
-        admin = Admin.query.filter_by(id=id).first()
-        response = make_response(jsonify(admin.to_dict()), 200)
+        admins = Admin.query.filter_by(id=id).first()
+        response = make_response(jsonify(admins.to_dict()), 200)
         return response
     
     def post(self):
@@ -223,12 +223,12 @@ class Admin(Resource):
         password = data['_password_hash']
         email = data['email']
 
-        admin = Admin.query.filter_by(username=username).first()
+        admins = Admin.query.filter_by(username=username).first()
 
-        if not admin:
+        if not admins:
             return {'message' : 'Invalid Admin'}, 400  
 
-        session['admin_id'] = admin.id
+        session['admin_id'] = admins.id
 
 class CheckSession(Resource):
     def get(self):
@@ -241,21 +241,23 @@ class CheckSession(Resource):
         
 class Login(Resource):
     def post(self):
-        data = request.get_json()
+        data = request.form.get()
         email = data['email']
         password = data['_password_hash']
         username = data['username']
         
-        admin = Admin.query.filter_by(username=username).first()
+        admins = Admin.query.filter_by(username=username).first()
 
-        if admin:
-            if admin.authenticate(password):
-                session['admin_id'] = admin.id
-                return redirect('/admin')
+        if admins:
+            if admins.authenticate(password):
+                session['admin_id'] = admins.id
+                return {'message' : 'successful'}
+                # return redirect('http://127.0.0.1:5555/admin')
             else:
                 return make_response(jsonify({'message': 'Invalid admin credentials'}), 400)
+            
+
         else:
-            # If the email is not in the admin table, check the user table
             user = User.query.filter_by(email=email).first()
             if user:
                 if user.authenticate(password):
@@ -295,7 +297,7 @@ api.add_resource(ViewAppointment, '/appointments')
 api.add_resource(ViewAppointmentById, '/appointments/<int:id>')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Register, '/register', endpoint='register')
-api.add_resource(Admin, '/admin', endpoint='admin')
+api.add_resource(Admins, '/admin', endpoint='admin')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(Users, '/users')
 
