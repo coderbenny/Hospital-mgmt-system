@@ -47,7 +47,6 @@ function BookAppointments() {
 
     const Home = () =>{window.location.href='http://localhost:3000/patientview'}
     
-    // style={{backgroundImage:`url(/BookAp.jpg)`}}
     return (
         <div className="flex flex-col items-center justify-center h-screen" >
             <h1 className="text-3xl font-bold mb-8">Book an Appointment</h1>
@@ -106,7 +105,7 @@ function BookAppointments() {
                     type="submit"
                     style={{ marginLeft: '60px' }}
                 >
-                    Home
+                    🏠
                 </button>
             </form>
         </div>

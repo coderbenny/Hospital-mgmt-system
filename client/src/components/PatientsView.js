@@ -4,6 +4,7 @@ import "./PatientsView.css";
 function PatientsView() {
   // Appointments state
   const [appointments, setAppointments] = useState([]);
+  // style={{ transform: '200deg' }} 
 
   return (
     <div className="bg-cover bg-center h-screen" style={{backgroundImage: `url('/PatientsBG.jpg')`}}>
