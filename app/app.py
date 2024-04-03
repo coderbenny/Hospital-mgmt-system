@@ -1,11 +1,16 @@
-from flask import Flask, make_response,jsonify, request
+from flask import Flask, make_response,jsonify, request, session
 from flask_restful import Api, Resource
 from flask_migrate import Migrate
 from flask_cors import CORS
 from datetime import datetime
-from models.models import db, Doctor, Patient, Appointment
-from flask_session import Session
+from models.models import db, Doctor, Patient, Appointment, User, Admin
+#from flask_session import Session
+from flask_bcrypt import Bcrypt
 
+# from flask.ext.bcrypt import Bcrypt
+# instantiate Bcrypt with app instance
+
+from flask_cors import CORS
 # Initialize app
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"]='sqlite:///app.db'
@@ -15,7 +20,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 api = Api(app)
 
 migrate = Migrate(app, db)
+bcrypt = Bcrypt(app)
 
+CORS(app)
 # server_session= Session(app)
 db.init_app(app)
 cors=CORS(app, supports_credentials=True)
@@ -200,7 +207,121 @@ class ViewAppointmentById(Resource):
 
         return response
     
+class Register(Resource):
+    def post(self):
+        try: 
+            data = request.get_json()
+            username = data['username']
+            password = data['password']
+            email = data['email']
+            role_id = data['role_id']
+
+            if not username or not password:
+                return {'message': 'Username, Password and Email are required'}
+            
+            #existing user check
+            existing_user = User.query.filter_by(email=email).first()
+            if existing_user:
+                return {'message' : 'Username already exists'}
+                
+            new_user = User(
+                username=username, 
+                _password_hash=password, 
+                email=email, role_id=role_id
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            new_user_dict = {
+                "username" : new_user.username,
+                "email" : new_user.email,
+                "role_id": new_user.role_id
+            }
+            return make_response(jsonify(new_user_dict), 201)
+        
+        except ValueError:
+            return make_response(jsonify({"Invalid Email"}), 400)
+
+        
+class Admins(Resource):
+    def get(self, id):
+        admins = Admin.query.filter_by(id=id).first()
+        response = make_response(jsonify(admins.to_dict()), 200)
+        return response
     
+    def post(self):
+        data=request.get_json()
+        username = data['username']
+        password = data['_password_hash']
+        email = data['email']
+
+        admins = Admin.query.filter_by(username=username).first()
+
+        if not admins:
+            return {'message' : 'Invalid Admin'}, 400  
+
+        session['admin_id'] = admins.id
+
+class CheckSession(Resource):
+    def get(self):
+        if 'user_id' in session:
+            user_id = session['user_id']
+            user = User.query.get(user_id)
+            return jsonify(user.to_dict()), 200
+        else:
+            return {}, 204
+        
+class Login(Resource):
+    def post(self):
+        
+        data = request.get_json()
+        username = data['username']
+        password = data['password']
+        email = data['email']
+        role_id = data['role_id']
+        admins = Admin.query.filter_by(username=username).first()
+
+        if admins:
+            if admins.authenticate(password):
+                session['admin_id'] = admins.id
+                response = make_response(jsonify({'message' : 'successful'}), 200)
+                return response
+                # return redirect('http://127.0.0.1:5555/admin')
+            else:
+                return make_response(jsonify({'message': 'Invalid admin credentials'}), 400)
+            
+
+        else:
+            user = User.query.filter_by(email=email).first()
+            if user:
+                if user.authenticate(password):
+                    session['user_id'] = user.id
+                    return make_response(jsonify({'message': 'User login successful'}), 200)
+                else:
+                    return make_response(jsonify({'message': 'Invalid user credentials'}), 400)
+            else:
+                return make_response(jsonify({"message" : "Email not recognised"}), 400)
+
+class Logout(Resource):
+    def delete(self):
+        session.pop('user_id', None)
+        return {'Logged out'}, 204
+
+class Users(Resource):
+    def get(self):
+        users = User.query.all()
+        list_users = []
+        for user in users:
+            user_dict = {
+                "Id" : user.id,
+                "User Name": user.username,
+                "Email" : user.email,
+                "Role Id" : user.role_id,
+            }   
+            list_users.append(user_dict)
+        return make_response(jsonify(list_users), 200)
+
+
+
         
 api.add_resource(Index, '/')
 api.add_resource(ViewDoctor, '/doctors')
@@ -209,6 +330,11 @@ api.add_resource(ViewPatient, '/patients')
 api.add_resource(ViewPatientById, '/patients/<int:id>')
 api.add_resource(ViewAppointment, '/appointments')
 api.add_resource(ViewAppointmentById, '/appointments/<int:id>')
+api.add_resource(Login, '/login', endpoint='login')
+api.add_resource(Register, '/register', endpoint='register')
+api.add_resource(Admins, '/admin', endpoint='admin')
+api.add_resource(Logout, '/logout', endpoint='logout')
+api.add_resource(Users, '/users')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
