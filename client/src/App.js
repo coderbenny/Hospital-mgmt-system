@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, redirect, useNavigate } from "react-router-dom";
 import AdminLogin from "./components/AdminLogin";
+import Admin from "./components/Admin"
 
 
 function Root() {
@@ -16,6 +17,7 @@ function Root() {
         <Routes>
           <Route path="/">
             <Route path="login" element={<AdminLogin/>}/>
+            <Route path="admin" element={<Admin/>}/>
           </Route>
         </Routes>
     </div>
@@ -30,6 +32,4 @@ export default function App(){
   )
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
 

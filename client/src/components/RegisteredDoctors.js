@@ -1,14 +1,3 @@
-// api.add_resource(Index, '/')
-// api.add_resource(ViewDoctor, '/doctors')
-// api.add_resource(ViewDoctorById, '/doctors/<int:id>')
-// api.add_resource(ViewPatient, '/patients')
-// api.add_resource(ViewPatientById, '/patients/<int:id>')
-// api.add_resource(ViewAppointment, '/appointments')
-// api.add_resource(ViewAppointmentById, '/appointments/<int:id>')
-// api.add_resource(Login, '/login')
-// api.add_resource(Register, '/register')
-// api.add_resource(Admin, '/admin')
-
 import React from "react";
 import { useEffect, useState } from "react";
 
@@ -40,13 +29,13 @@ export default function RegisteredDoctors(){
     }, [])
     return (
         <div>
-            <table class="table-auto w-full bg-white border border-gray-300">
+            <table className="table-auto w-full bg-white border border-gray-300">
                 <caption> DOCTORS </caption>
                 <thead>
                     <tr>
-                        <th class="border border-gray-300 px-4 py-2">Doctor ID</th>
-                        <th class="border border-gray-300 px-4 py-2">Name</th>
-                        <th class="border border-gray-300 px-4 py-2">Speciality</th>
+                        <th className="border border-gray-300 px-4 py-2">Doctor ID</th>
+                        <th className="border border-gray-300 px-4 py-2">Name</th>
+                        <th className="border border-gray-300 px-4 py-2">Speciality</th>
                     </tr>
                 </thead>
                 <tbody>

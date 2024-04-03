@@ -4,7 +4,6 @@ from flask_migrate import Migrate
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
-from flask_cors import CORS
 
 
 app = Flask(__name__)
@@ -25,4 +24,3 @@ bcrypt = Bcrypt(app)
 
 api = Api(app)
 
-CORS(app)
