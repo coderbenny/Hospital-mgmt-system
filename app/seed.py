@@ -1,6 +1,6 @@
 from flask import Flask
 from app import app 
-from models.models import Doctor, Patient, Appointment ,db
+from models.models import Doctor, Patient, Appointment ,Admin, User, Role, db
 from faker import Faker
 import random
 from datetime import datetime, timedelta
@@ -59,5 +59,36 @@ with app.app_context():
         )
         appointments.append(appointment)
     db.session.add_all(appointments)
+    print('adding usernames')
+    users = [User(
+        username=faker.name(),
+        _password_hash=faker.password(),
+        email=faker.email(),
+        role_id=random.randint(1, 2)
+    ) for i in range(20)]
+    db.session.add_all(users)
+
+    print('adding roles')
+    user_roles = ['Doctor', 'Patient', 'Admin']
+    roles = [Role(
+        name='Doctor',
+        ),
+        Role(
+            name='Patient'
+        ), 
+        Role(
+            name='Admin'
+    )]
+
+    db.session.add_all(roles)
+
+    admin = Admin(username= 'admin1',
+        _password_hash= 'admin1',
+        email= 'admin@gmail.com',
+        role_id= '3'
+    ) 
+
+    db.session.add(admin)
+
     db.session.commit()  
     print("finished")
