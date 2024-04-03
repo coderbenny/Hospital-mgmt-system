@@ -13,7 +13,6 @@ CORS(app)
 # CORS(app, origins=["http://localhost:4000"])
 
 # Initialize app
-
 # Index Route
 class Index(Resource):
     def get(self):
