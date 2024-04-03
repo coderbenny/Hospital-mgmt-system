@@ -1,5 +1,5 @@
 import React from "react";
-import RegisteredPatients from "./RegisteredPatients";
+import RegisteredPatients from "./RegisteredPatients.js";
 import Appointments from "./Appointments";
 import RegisteredDoctors from "./RegisteredDoctors";
 

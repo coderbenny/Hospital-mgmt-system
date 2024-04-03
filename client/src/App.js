@@ -28,6 +28,8 @@ function App() {
                 <Route path="/patientview" element={<PatientsView/>}></Route>
                 <Route path="/patientappointments" element={<Appointment/>}></Route>
                 <Route path="/bookappointments" element={<BookAppointments/>}></Route>
+                <Route path="login" element={<AdminLogin/>}/>
+                <Route path="admin" element={<Admin/>}/>                
             </Routes>
         </BrowserRouter>
     </div>
