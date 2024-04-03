@@ -7,7 +7,13 @@ from models.models import Doctor, Patient, Appointment, User, Admin
 # instantiate Bcrypt with app instance
 from config import app, db, api, bcrypt
 
+from flask_cors import CORS
+CORS(app)
+
+# CORS(app, origins=["http://localhost:4000"])
+
 # Initialize app
+
 # Index Route
 class Index(Resource):
     def get(self):
@@ -186,7 +192,7 @@ class Register(Resource):
         try: 
             data = request.get_json()
             username = data['username']
-            password = data['_password_hash']
+            password = data['password']
             email = data['email']
             role_id = data['role_id']
 
@@ -205,8 +211,13 @@ class Register(Resource):
             )
             db.session.add(new_user)
             db.session.commit()
-
-            return make_response(jsonify(new_user.to_dict()), 201)
+            new_user_dict = {
+                "username" : new_user.username,
+                "email" : new_user.email,
+                "role_id": new_user.role_id
+            }
+            return make_response(jsonify(new_user_dict), 201)
+        
         except ValueError:
             return make_response(jsonify({"Invalid Email"}), 400)
 
@@ -241,17 +252,19 @@ class CheckSession(Resource):
         
 class Login(Resource):
     def post(self):
-        data = request.form.get()
-        email = data['email']
-        password = data['_password_hash']
-        username = data['username']
         
+        data = request.get_json()
+        username = data['username']
+        password = data['password']
+        email = data['email']
+        role_id = data['role_id']
         admins = Admin.query.filter_by(username=username).first()
 
         if admins:
             if admins.authenticate(password):
                 session['admin_id'] = admins.id
-                return {'message' : 'successful'}
+                response = make_response(jsonify({'message' : 'successful'}), 200)
+                return response
                 # return redirect('http://127.0.0.1:5555/admin')
             else:
                 return make_response(jsonify({'message': 'Invalid admin credentials'}), 400)
