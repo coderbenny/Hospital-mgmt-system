@@ -11,6 +11,7 @@ import BookAppointments from './components/BookAppointments'
 import DoctorView from './components/DoctorView'
 import DoctorUpdate from './components/DoctorUpdate'
 import DoctorReg from './components/DoctorReg';
+import Admin from './components/Admin'
 
 function App() {
   return (
@@ -28,7 +29,6 @@ function App() {
                 <Route path="/patientview" element={<PatientsView/>}></Route>
                 <Route path="/patientappointments" element={<Appointment/>}></Route>
                 <Route path="/bookappointments" element={<BookAppointments/>}></Route>
-                <Route path="login" element={<AdminLogin/>}/>
                 <Route path="admin" element={<Admin/>}/>                
             </Routes>
         </BrowserRouter>

@@ -282,7 +282,7 @@ class Login(Resource):
 
         if admins:
             if admins.authenticate(password):
-                session['admin_id'] = admins.id
+                # session['admin_id'] = admins.id
                 response = make_response(jsonify({'message' : 'successful'}), 200)
                 return response
                 # return redirect('http://127.0.0.1:5555/admin')
