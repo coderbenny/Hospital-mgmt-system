@@ -16,6 +16,9 @@ with app.app_context():
     Doctor.query.delete()
     Patient.query.delete()
     Appointment.query.delete()
+    User.query.delete()
+    Role.query.delete()
+    Admin.query.delete()
 
     # Create some doctors and patients for testing purposes
     print("Creating doctors...")
