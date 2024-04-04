@@ -22,7 +22,9 @@ api = Api(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 
-CORS(app)
+# CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+
 # server_session= Session(app)
 db.init_app(app)
 # cors=CORS(app, supports_credentials=True)
@@ -289,7 +291,8 @@ class Login(Resource):
                 session['admin_id'] = admins.id
                 response = make_response(jsonify({'message' : 'successful'}), 200)
                 # return response
-                return (redirect( url_for("admin")), response)
+                response.headers.add('Access-Control-Allow-Origin', '*')
+                return response
             else:
                 return make_response(jsonify({'message': 'Invalid admin credentials'}), 400)
             

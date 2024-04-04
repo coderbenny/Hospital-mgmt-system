@@ -49,7 +49,7 @@ class DoctorLogin extends Component {
         
             <div className='flex justify-center mt-5'>
                  
-                <form action='' className='flex flex-col w-[500px] p-3 rounded-md shadow-md items-center'>
+                <form onSubmit={this.handleSubmit} action='' className='flex flex-col w-[500px] p-3 rounded-md shadow-md items-center'>
                 <h1 className='font-bold text-2xl mb-4'>Doctor Login</h1>
 
                     <div className='items-center mb-1'>
@@ -62,7 +62,7 @@ class DoctorLogin extends Component {
                     </div>
                     <div className='items-center mb-1'>
                         <label className='font-semibold mr-3'>Email</label>
-                        <input type='password' name='password' className='px-2 border-2 border-gray-150' />
+                        <input type='email' name='email' className='px-2 border-2 border-gray-150' />
                     </div>                                     
                     <div className='items-center'>
                         <label className='font-semibold mr-2'>Remember Me</label>
