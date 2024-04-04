@@ -21,22 +21,44 @@ with app.app_context():
     Admin.query.delete()
 
     # Create some doctors and patients for testing purposes
+    print('adding usernames')
+    users = [User(
+        username=faker.name(),
+        _password_hash=faker.password(),
+        email=faker.email(),
+        role_id=random.randint(1, 2)
+    ) for i in range(20)]
+
+    db.session.add_all(users)
+
     print("Creating doctors...")
     specialities=['cardiologist','surgeon','phsiotherapist','pediatric']
+
+    docs = User.query.filter_by(role_id = 1)
+    doc_id = []
+    for d in docs:
+        doc_id.append(d.id)
+
     doctors=[Doctor(
         name =  faker.name(),
-        speciality= random.choice(specialities)
+        speciality= random.choice(specialities),
+        user_id = random.choice(doc_id)
     )for i in range(10)]
 
     db.session.add_all(doctors)
 
     print("Creating patients...")
 
+    pats = User.query.filter_by(role_id = 2)
+    ids = []
+    for p in pats:
+        ids.append(p.id)
+
     patients=[Patient(
         name=faker.name(),
         age= random.randint(0,100),
-        disease= faker.word()
-
+        disease= faker.word(),
+        user_id = random.choice(ids)
     )for i in range(10)]
 
     db.session.add_all(patients)
@@ -62,14 +84,7 @@ with app.app_context():
         )
         appointments.append(appointment)
     db.session.add_all(appointments)
-    print('adding usernames')
-    users = [User(
-        username=faker.name(),
-        _password_hash=faker.password(),
-        email=faker.email(),
-        role_id=random.randint(1, 2)
-    ) for i in range(20)]
-    db.session.add_all(users)
+
 
     print('adding roles')
     user_roles = ['Doctor', 'Patient', 'Admin']
