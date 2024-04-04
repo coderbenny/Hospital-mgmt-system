@@ -323,13 +323,49 @@ class Users(Resource):
         users = User.query.all()
         list_users = []
         for user in users:
-            user_dict = {
-                "Id" : user.id,
-                "User Name": user.username,
-                "Email" : user.email,
-                "Role Id" : user.role_id,
-            }   
-            list_users.append(user_dict)
+            if user.role_id == 1:
+                user_dict = {
+                    "Id" : user.id,
+                    "User Name": user.username,
+                    "Email" : user.email,
+                    "Role Id" : user.role_id,
+                    "doctors" : []
+                }   
+                for doctor in user.doctors:
+                    doc = {
+                        "name" : doctor.name,
+                        "speciality" : doctor.speciality
+                    }
+                    user_dict['doctors'].append(doc)
+                list_users.append(user_dict)
+
+            elif user.role_id == 2:
+                user_dict = {
+                    "Id" : user.id,
+                    "User Name": user.username,
+                    "Email" : user.email,
+                    "Role Id" : user.role_id,
+                    "Patient" : []
+                }   
+                for patient in user.patients:
+                    pat = {
+                        'name': patient.name,
+                        'age' : patient.age,
+                        'disease': patient.disease
+                    }
+                    user_dict['Patient'].append(pat)
+
+                list_users.append(user_dict)   
+
+            elif user.role_id == 3:
+                user_dict = {
+                    "Id" : user.id,
+                    "User Name": user.username,
+                    "Email" : user.email,
+                    "Role Id" : user.role_id,
+                }   
+                list_users.append(user_dict)    
+
         return make_response(jsonify(list_users), 200)
 
 
