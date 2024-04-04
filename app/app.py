@@ -1,4 +1,4 @@
-from flask import Flask, make_response,jsonify, request, session
+from flask import Flask, make_response,jsonify, request, session, redirect, url_for
 from flask_restful import Api, Resource
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -22,17 +22,18 @@ api = Api(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 
-CORS(app)
+# CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+
 # server_session= Session(app)
 db.init_app(app)
-cors=CORS(app, supports_credentials=True)
-
+# cors=CORS(app, supports_credentials=True)
+app.secret_key = 'hospital-management'
 # Index Route
 class Index(Resource):
 
     def get(self):
         return '<h1>Hospital Mgmt API Index Page</h1>'
-
 
 class ViewDoctor(Resource):
 
@@ -59,6 +60,7 @@ class ViewDoctor(Resource):
         except:
             db.session.rollback()
             return make_response(jsonify({'error':"Post  Failed"}),500)
+
 class ViewDoctorById(Resource):
 
     def get(self,id):
@@ -86,7 +88,6 @@ class ViewDoctorById(Resource):
         )
 
         return response
-
 
 class ViewPatient(Resource):
 
@@ -121,7 +122,7 @@ class ViewPatient(Resource):
         except:
             db.session.rollback()
             return make_response(jsonify({'error':"Post Failed"}),500)
-        
+    
 class ViewPatientById(Resource):
 
     def get(self,id):
@@ -240,13 +241,18 @@ class Register(Resource):
         
         except ValueError:
             return make_response(jsonify({"Invalid Email"}), 400)
-
-        
+      
 class Admins(Resource):
-    def get(self, id):
-        admins = Admin.query.filter_by(id=id).first()
-        response = make_response(jsonify(admins.to_dict()), 200)
-        return response
+    def get(self):
+        if "admin" in session:
+            admin = session["admin"]
+            return f"<h1>{admin}</h1>"
+        elif "user" in session:
+            user = session["user"]
+            return f"<h1>{user}</h1>"
+        else:
+            return redirect(url_for("login"))
+
     
     def post(self):
         data=request.get_json()
@@ -259,7 +265,7 @@ class Admins(Resource):
         if not admins:
             return {'message' : 'Invalid Admin'}, 400  
 
-        session['admin_id'] = admins.id
+        # session['admin_id'] = admins.id
 
 class CheckSession(Resource):
     def get(self):
@@ -282,20 +288,25 @@ class Login(Resource):
 
         if admins:
             if admins.authenticate(password):
-                # session['admin_id'] = admins.id
+                session['admin_id'] = admins.id
                 response = make_response(jsonify({'message' : 'successful'}), 200)
+                # return response
+                response.headers.add('Access-Control-Allow-Origin', '*')
                 return response
-                # return redirect('http://127.0.0.1:5555/admin')
             else:
                 return make_response(jsonify({'message': 'Invalid admin credentials'}), 400)
             
-
         else:
             user = User.query.filter_by(email=email).first()
             if user:
                 if user.authenticate(password):
                     session['user_id'] = user.id
-                    return make_response(jsonify({'message': 'User login successful'}), 200)
+                    response = make_response(jsonify({'message': 'User login successful'}), 200)
+                    # if role_id == 1:
+                    #     return (redirect( url_for("admin")), response)
+                    # if role_id == 2:
+                    #     return (redirect( url_for("admin")), response)
+                    return response
                 else:
                     return make_response(jsonify({'message': 'Invalid user credentials'}), 400)
             else:
@@ -304,7 +315,8 @@ class Login(Resource):
 class Logout(Resource):
     def delete(self):
         session.pop('user_id', None)
-        return {'Logged out'}, 204
+        response = make_response(jsonify({'message': 'logging out'}), 204)
+        return response
 
 class Users(Resource):
     def get(self):
@@ -321,8 +333,7 @@ class Users(Resource):
         return make_response(jsonify(list_users), 200)
 
 
-
-        
+       
 api.add_resource(Index, '/')
 api.add_resource(ViewDoctor, '/doctors')
 api.add_resource(ViewDoctorById, '/doctors/<int:id>')

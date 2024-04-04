@@ -12,6 +12,7 @@ function Admin(){
             <Appointments />
             <RegisteredPatients/>
             <RegisteredDoctors/>
+            <button className="" onClick={()=>window.location.href="/"}>Log Out</button>
         </div>
     );
 }
