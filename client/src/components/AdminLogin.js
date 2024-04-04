@@ -16,7 +16,7 @@ class AdminLogin extends Component {
             username: formData.get('username'),
             password: formData.get('password'),
             email: formData.get('email'),
-            role_id : formData.get('role_id'),
+            role_id : 3,
         };
         console.log(data)
 
@@ -29,7 +29,7 @@ class AdminLogin extends Component {
                 },
                 body: JSON.stringify(data),
             });
-            console.log(response)
+            // console.log(response)
 
             if (response.status !== 200){
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -61,11 +61,7 @@ class AdminLogin extends Component {
                     <div className='items-center mb-1'>
                         <label className='font-semibold mr-3'>Password</label>
                         <input type='password' name='password' className='px-2 border-2 border-gray-150' />
-                    </div>
-                    <div className='items-center mb-1'>
-                        <label className='font-semibold mr-3'>Role Id</label>
-                        <input type='role_id' name='role_id' className='px-2 border-2 border-gray-150' />
-                    </div>                    
+                    </div>                  
                     <button type='submit' className='bg-green-500 text-white hover:shadow-md p-1 mb-3 hover:font-bold w-[280px]'>Login</button>
                     <Link to='/' className='bg-red-500 text-white hover:shadow-md p-1 mb-3 hover:font-bold w-[280px] flex justify-center'>Cancel</Link>
                 </form>
