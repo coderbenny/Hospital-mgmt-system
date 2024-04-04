@@ -2,46 +2,12 @@ import React, { Component } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 
 class DoctorLogin extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            login: false
-        };
-    }
-    handleSubmit = async (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.target);
-        const data = {
-            username: formData.get('username'),
-            password: formData.get('password'),
-            email: formData.get('email'),
-            role_id : 2,
-        };
-        console.log(data)
 
-        try {
-            const response = await fetch('http://127.0.0.1:5555/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // 'Access-Control-Allow-Origin' : '*',
-                },
-                body: JSON.stringify(data),
-            });
-            console.log(response)
-
-            if (response.status !== 200){
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            } else {
-                console.log('Login successful');
-                this.setState({ login: true });
-            }
-        } catch (error) {
-            console.error('An error occurred:', error);
-        }
-    };
     render() {
-        if (this.state.login){
+        
+        const { handleSubmit, log_in } = this.props;
+
+        if (log_in){
             return < Navigate to = '/doctor_view'/>
         }       
 
@@ -49,7 +15,7 @@ class DoctorLogin extends Component {
         
             <div className='flex justify-center mt-5'>
                  
-                <form onSubmit={this.handleSubmit} action='' className='flex flex-col w-[500px] p-3 rounded-md shadow-md items-center'>
+                <form onSubmit={handleSubmit} action='' className='flex flex-col w-[500px] p-3 rounded-md shadow-md items-center'>
                 <h1 className='font-bold text-2xl mb-4'>Doctor Login</h1>
 
                     <div className='items-center mb-1'>

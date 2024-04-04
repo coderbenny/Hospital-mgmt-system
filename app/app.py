@@ -315,7 +315,8 @@ class Login(Resource):
 class Logout(Resource):
     def delete(self):
         session.pop('user_id', None)
-        return {'Logged out'}, 204
+        response = make_response(jsonify({'message': 'logging out'}), 204)
+        return response
 
 class Users(Resource):
     def get(self):
