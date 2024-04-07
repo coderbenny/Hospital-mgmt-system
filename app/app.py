@@ -275,6 +275,8 @@ class CheckSession(Resource):
             return jsonify(user.to_dict()), 200
         else:
             return {}, 204
+
+api.add_resource(CheckSession, '/@me')
         
 class Login(Resource):
     def post(self):
@@ -346,7 +348,7 @@ api.add_resource(Register, '/register', endpoint='register')
 api.add_resource(Admins, '/admin', endpoint='admin')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(Users, '/users')
-api.add_resource(CheckSession, '/@me')
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

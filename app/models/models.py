@@ -169,6 +169,18 @@ class Role(db.Model, SerializerMixin):
     name = db.Column(db.String, unique=True, nullable=False)
     user = db.relationship('User', back_populates='role')
 
+    def to_dict(self, visited=None):
+        if visited is None:
+            visited = set()
+        if self in visited:
+            return {'id': self.id}  # or any other representation to break the recursion
+        visited.add(self)
+        return {
+            'id': self.id,
+            'name': self.name,
+            'user': self.user
+        }
+
 # Admin 
 class Admin(User):
     __tablename__ = 'admins'

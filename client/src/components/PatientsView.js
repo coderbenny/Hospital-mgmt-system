@@ -4,7 +4,15 @@ import "./PatientsView.css";
 function PatientsView() {
   // Appointments state
   const [appointments, setAppointments] = useState([]);
-  // style={{ transform: '200deg' }} 
+  //UserInfo state
+  const [user,setUser] = useState({}) 
+
+  //GET logged in user info
+  const UserInfo= async  () =>{
+    let response = await fetch("http://localhost:3000/@me")
+    console.log(response)
+    setUser(response)
+  }
 
   return (
     <div className="bg-cover bg-center h-screen" style={{backgroundImage: `url('/PatientsBG.jpg')`}}>
