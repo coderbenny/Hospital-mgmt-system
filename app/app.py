@@ -275,7 +275,7 @@ class CheckSession(Resource):
             response_dict = {
                 'id' : user.id,
                 'username' : user.username,
-                'email' : user.email
+                'email': user.email
             }
             return make_response(jsonify(response_dict), 200)
         else:
