@@ -82,8 +82,19 @@ with app.app_context():
         )
         appointments.append(appointment)
     db.session.add_all(appointments)
+    print('adding usernames')
+    User.query.delete()
+    users = [User(
+        username=faker.name(),
+        _password_hash=faker.password(),
+        email=faker.email(),
+        role_id=random.randint(1, 2)
+    ) for i in range(20)]
+    db.session.add_all(users)
 
-    print('adding roles')
+
+    Role.query.delete()
+    print('adding roles') 
     user_roles = ['Doctor', 'Patient', 'Admin']
     roles = [Role(
         name='Doctor',
@@ -97,6 +108,7 @@ with app.app_context():
 
     db.session.add_all(roles)
 
+    Admin.query.delete()
     admin = Admin(username= 'admin1',
         _password_hash= 'admin1',
         email= 'admin@gmail.com',

@@ -281,14 +281,14 @@ class CheckSession(Resource):
             response_dict = {
                 'id' : user.id,
                 'username' : user.username,
-                'email' : user.email
+                'email': user.email
             }
-            return jsonify(response_dict), 200
+            return make_response(jsonify(response_dict), 200)
         else:
-            return {"error" : "message not found"}, 204
+            return {}, 204
 
 api.add_resource(CheckSession, '/@me')
-
+        
 class Login(Resource):
     def post(self):
         
@@ -391,6 +391,7 @@ api.add_resource(Register, '/register', endpoint='register')
 api.add_resource(Admins, '/admin', endpoint='admin')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(Users, '/users')
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
