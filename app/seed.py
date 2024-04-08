@@ -82,6 +82,7 @@ with app.app_context():
         )
         appointments.append(appointment)
     db.session.add_all(appointments)
+    
     print('adding usernames')
     User.query.delete()
     users = [User(
