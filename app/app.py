@@ -272,7 +272,7 @@ class CheckSession(Resource):
         if 'user_id' in session:
             user_id = session['user_id']
             user = User.query.get(user_id)
-            return jsonify(user.to_dict()), 200
+            return make_response(jsonify(user.to_dict()), 200)
         else:
             return {}, 204
 

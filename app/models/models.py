@@ -143,6 +143,20 @@ class User(db.Model, SerializerMixin):
         self.email = email
         self.role_id = role_id
     
+    def to_dict(self, visited=None):
+        if visited is None:
+            visited = set()
+        if self in visited:
+            return {'id': self.id}  # or any other representation to break the recursion
+        visited.add(self)
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email' : self.email,
+            "role_id" : self.role_id,
+            "role" : self.role.to_dict(visited) if self.role else None
+        }
+    
     @hybrid_property
     def password(self):
         return self._password_hash
