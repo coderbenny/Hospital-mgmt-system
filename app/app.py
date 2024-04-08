@@ -13,12 +13,15 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"]='sqlite:///app.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+app.config["SESSION_TYPE"] = "filesystem"  # Use filesystem for session storage
+app.config["SECRET_KEY"] = "hospital-management"
+
 # Initialize API, migrate, bcrypt
 
 api = Api(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
-
+Session(app)
 # CORS(app)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
@@ -250,27 +253,25 @@ class Register(Resource):
 class Admins(Resource):
     def get(self):
         if "admin" in session:
-            admin = session["admin"]
-            return f"<h1>{admin}</h1>"
+            admin_id = session["admin_id"]
+            print(admin_id)
+            return jsonify({"admin_id": admin_id})
         elif "user" in session:
             user = session["user"]
             return f"<h1>{user}</h1>"
         else:
-            return redirect(url_for("login"))
-
-    
+            return {"message" : "not logged in"}
+        
     def post(self):
         data=request.get_json()
         username = data['username']
-        password = data['_password_hash']
+        password = data['password']
         email = data['email']
 
         admins = Admin.query.filter_by(username=username).first()
 
         if not admins:
             return {'message' : 'Invalid Admin'}, 400  
-
-        # session['admin_id'] = admins.id
 
 class CheckSession(Resource):
     def get(self):
@@ -279,7 +280,7 @@ class CheckSession(Resource):
             user = User.query.get(user_id)
             return jsonify(user.to_dict()), 200
         else:
-            return {}, 204
+            return {"error" : "message not found"}, 204
 
 api.add_resource(CheckSession, '/@me')
 
