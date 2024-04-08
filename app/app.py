@@ -4,11 +4,8 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from datetime import datetime
 from models.models import db, Doctor, Patient, Appointment, User, Admin
-#from flask_session import Session
+from flask_session import Session
 from flask_bcrypt import Bcrypt
-
-# from flask.ext.bcrypt import Bcrypt
-# instantiate Bcrypt with app instance
 
 from flask_cors import CORS
 # Initialize app
@@ -16,9 +13,9 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"]='sqlite:///app.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# Initialize API
-api = Api(app)
+# Initialize API, migrate, bcrypt
 
+api = Api(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 
@@ -29,6 +26,7 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 db.init_app(app)
 # cors=CORS(app, supports_credentials=True)
 app.secret_key = 'hospital-management'
+
 # Index Route
 class Index(Resource):
 
@@ -40,9 +38,16 @@ class ViewDoctor(Resource):
     def get(self):
         try:
             doctors = Doctor.query.all()
-            result = [doctor.to_dict(include_appointments=False) for doctor in doctors]
-
-            return make_response(jsonify(result),200)
+            # result = [doctor.to_dict(include_appointments=False) for doctor in doctors]
+            docs = []
+            for doctor in doctors:
+                doctor_dict = {
+                    "name": doctor.name, 
+                    "speciality": doctor.speciality,
+                    "id": doctor.id
+                }
+                docs.append(doctor_dict)
+            return make_response(jsonify(docs),200)
         except Exception as e:
             return make_response({"error":"Doctors not Found/Exist"},404)
     
@@ -275,7 +280,9 @@ class CheckSession(Resource):
             return jsonify(user.to_dict()), 200
         else:
             return {}, 204
-        
+
+api.add_resource(CheckSession, '/@me')
+
 class Login(Resource):
     def post(self):
         
@@ -290,7 +297,6 @@ class Login(Resource):
             if admins.authenticate(password):
                 session['admin_id'] = admins.id
                 response = make_response(jsonify({'message' : 'successful'}), 200)
-                # return response
                 response.headers.add('Access-Control-Allow-Origin', '*')
                 return response
             else:
@@ -302,15 +308,12 @@ class Login(Resource):
                 if user.authenticate(password):
                     session['user_id'] = user.id
                     response = make_response(jsonify({'message': 'User login successful'}), 200)
-                    # if role_id == 1:
-                    #     return (redirect( url_for("admin")), response)
-                    # if role_id == 2:
-                    #     return (redirect( url_for("admin")), response)
                     return response
                 else:
                     return make_response(jsonify({'message': 'Invalid user credentials'}), 400)
             else:
                 return make_response(jsonify({"message" : "Email not recognised"}), 400)
+        
 
 class Logout(Resource):
     def delete(self):
@@ -385,4 +388,8 @@ api.add_resource(Users, '/users')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
+
+
+# Index Route
+
 
