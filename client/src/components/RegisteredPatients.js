@@ -27,31 +27,37 @@ export default function RegisteredPatients(){
                 console.error("Error fetching appointments:", error);
             });
     }, [])
+
     return (
         <div>
-            <table className="table-auto border-collapse border border-gray-400">
-                <caption> PATIENTS </caption>
+            <table class="patient-table">
+                <caption class="title"> PATIENTS </caption>
+
                 <thead>
                     <tr>
-                        <th className="border border-green-400 px-4 py-2">Patient ID</th>
-                        <th className="border border-green-400 px-4 py-2">Name</th>
-                        <th className="border border-green-400 px-4 py-2">Age</th>
-                        <th className="border border-green-400 px-4 py-2">Disease</th>
+                        <th class="column-header">Patient ID</th>
+                        <th class="column-header">Name</th>
+                        <th class="column-header">Age</th>
+                        <th class="column-header">Disease</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {patients.map((patients) => (
                         <tr key={patients.id}>
-                            <td className="border border-gray-400 px-4 py-2">{patients.id}</td>
-                            <td className="border border-gray-400 px-4 py-2">{patients.name}</td>
-                            <td className="border border-gray-400 px-4 py-2">{patients.age}</td>
-                            <td className="border border-gray-400 px-4 py-2">{patients.disease}</td>
+                            <td class="cell">{patients.id}</td>
+                            <td class="cell">{patients.name}</td>
+                            <td class="cell">{patients.age}</td>
+                            <td class="cell">{patients.disease}</td>
+
                             <td>
-                                <button onClick={() => handleDelete(patients.id)}>Delete</button>
+                                <button class="delete" onClick={() => handleDelete(patients.id)}>x</button>
                             </td>
+
                         </tr>
                     ))}
                 </tbody>
+
             </table>
         </div>
     )
