@@ -4,6 +4,7 @@ import Appointments from "./AdminApppoint.js";
 import RegisteredDoctors from "./RegisteredDoctors";
 
 
+
 function Admin(){
     
     return (
