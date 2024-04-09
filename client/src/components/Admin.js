@@ -6,6 +6,7 @@ import "./admin.css"
 import { Link } from "react-router-dom";
 
 
+
 function Admin(){
     
     return (
