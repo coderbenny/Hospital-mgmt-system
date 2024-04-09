@@ -4,11 +4,8 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from datetime import datetime
 from models.models import db, Doctor, Patient, Appointment, User, Admin
-#from flask_session import Session
+from flask_session import Session
 from flask_bcrypt import Bcrypt
-
-# from flask.ext.bcrypt import Bcrypt
-# instantiate Bcrypt with app instance
 
 from flask_cors import CORS
 # Initialize app
@@ -16,12 +13,15 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"]='sqlite:///app.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# Initialize API
-api = Api(app)
+app.config["SESSION_TYPE"] = "filesystem"  # Use filesystem for session storage
+app.config["SECRET_KEY"] = "hospital-management"
 
+# Initialize API, migrate, bcrypt
+
+api = Api(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
-
+Session(app)
 # CORS(app)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
@@ -29,6 +29,7 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 db.init_app(app)
 # cors=CORS(app, supports_credentials=True)
 app.secret_key = 'hospital-management'
+
 # Index Route
 class Index(Resource):
 
@@ -40,9 +41,16 @@ class ViewDoctor(Resource):
     def get(self):
         try:
             doctors = Doctor.query.all()
-            result = [doctor.to_dict(include_appointments=False) for doctor in doctors]
-
-            return make_response(jsonify(result),200)
+            # result = [doctor.to_dict(include_appointments=False) for doctor in doctors]
+            docs = []
+            for doctor in doctors:
+                doctor_dict = {
+                    "name": doctor.name, 
+                    "speciality": doctor.speciality,
+                    "id": doctor.id
+                }
+                docs.append(doctor_dict)
+            return make_response(jsonify(docs),200)
         except Exception as e:
             return make_response({"error":"Doctors not Found/Exist"},404)
     
@@ -245,19 +253,19 @@ class Register(Resource):
 class Admins(Resource):
     def get(self):
         if "admin" in session:
-            admin = session["admin"]
-            return f"<h1>{admin}</h1>"
+            admin_id = session["admin_id"]
+            print(admin_id)
+            return jsonify({"admin_id": admin_id})
         elif "user" in session:
             user = session["user"]
             return f"<h1>{user}</h1>"
         else:
-            return redirect(url_for("login"))
-
-    
+            return {"message" : "not logged in"}
+        
     def post(self):
         data=request.get_json()
         username = data['username']
-        password = data['_password_hash']
+        password = data['password']
         email = data['email']
 
         admins = Admin.query.filter_by(username=username).first()
@@ -265,16 +273,21 @@ class Admins(Resource):
         if not admins:
             return {'message' : 'Invalid Admin'}, 400  
 
-        # session['admin_id'] = admins.id
-
 class CheckSession(Resource):
     def get(self):
         if 'user_id' in session:
             user_id = session['user_id']
-            user = User.query.get(user_id)
-            return jsonify(user.to_dict()), 200
+            user = User.query.filter_by(id=user_id).first()
+            response_dict = {
+                'id' : user.id,
+                'username' : user.username,
+                'email': user.email
+            }
+            return make_response(jsonify(response_dict), 200)
         else:
             return {}, 204
+
+api.add_resource(CheckSession, '/@me')
         
 class Login(Resource):
     def post(self):
@@ -290,7 +303,6 @@ class Login(Resource):
             if admins.authenticate(password):
                 session['admin_id'] = admins.id
                 response = make_response(jsonify({'message' : 'successful'}), 200)
-                # return response
                 response.headers.add('Access-Control-Allow-Origin', '*')
                 return response
             else:
@@ -302,15 +314,12 @@ class Login(Resource):
                 if user.authenticate(password):
                     session['user_id'] = user.id
                     response = make_response(jsonify({'message': 'User login successful'}), 200)
-                    # if role_id == 1:
-                    #     return (redirect( url_for("admin")), response)
-                    # if role_id == 2:
-                    #     return (redirect( url_for("admin")), response)
                     return response
                 else:
                     return make_response(jsonify({'message': 'Invalid user credentials'}), 400)
             else:
                 return make_response(jsonify({"message" : "Email not recognised"}), 400)
+        
 
 class Logout(Resource):
     def delete(self):
@@ -323,13 +332,49 @@ class Users(Resource):
         users = User.query.all()
         list_users = []
         for user in users:
-            user_dict = {
-                "Id" : user.id,
-                "User Name": user.username,
-                "Email" : user.email,
-                "Role Id" : user.role_id,
-            }   
-            list_users.append(user_dict)
+            if user.role_id == 1:
+                user_dict = {
+                    "Id" : user.id,
+                    "User Name": user.username,
+                    "Email" : user.email,
+                    "Role Id" : user.role_id,
+                    "doctors" : []
+                }   
+                for doctor in user.doctors:
+                    doc = {
+                        "name" : doctor.name,
+                        "speciality" : doctor.speciality
+                    }
+                    user_dict['doctors'].append(doc)
+                list_users.append(user_dict)
+
+            elif user.role_id == 2:
+                user_dict = {
+                    "Id" : user.id,
+                    "User Name": user.username,
+                    "Email" : user.email,
+                    "Role Id" : user.role_id,
+                    "Patient" : []
+                }   
+                for patient in user.patients:
+                    pat = {
+                        'name': patient.name,
+                        'age' : patient.age,
+                        'disease': patient.disease
+                    }
+                    user_dict['Patient'].append(pat)
+
+                list_users.append(user_dict)   
+
+            elif user.role_id == 3:
+                user_dict = {
+                    "Id" : user.id,
+                    "User Name": user.username,
+                    "Email" : user.email,
+                    "Role Id" : user.role_id,
+                }   
+                list_users.append(user_dict)    
+
         return make_response(jsonify(list_users), 200)
 
 
@@ -347,6 +392,11 @@ api.add_resource(Admins, '/admin', endpoint='admin')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(Users, '/users')
 
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
+
+
+# Index Route
+
 

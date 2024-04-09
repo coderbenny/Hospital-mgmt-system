@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./admin.css"
 
 export default function Appointments(){
     const [appointments, setAppointments] = useState([]);
@@ -28,25 +29,25 @@ export default function Appointments(){
 
     return (
         <div>
-            <table>
-                <caption> APPOINTMENTS </caption>
+            <table class="app-table">
+                <caption class="title"> APPOINTMENTS </caption>
                 <thead>
                     <tr>
-                        <th className="px-4 py-2 border-b">Appointment ID</th>
-                        <th className="px-4 py-2 border-b">Doctor Id</th>
-                        <th className="px-4 py-2 border-b">Patient Id</th>
-                        <th className="px-4 py-2 border-b">Date</th>
+                        <th class="column-header">Appointment ID</th>
+                        <th class="column-header">Doctor Id</th>
+                        <th class="column-header">Patient Id</th>
+                        <th class="column-header">Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     {appointments.map((appointment) => (
                         <tr key={appointment.id}>
-                            <td className="px-4 py-2 border-b">{appointment.id}</td>
-                            <td className="px-4 py-2 border-b">{appointment.date}</td>
-                            <td className="px-4 py-2 border-b">{appointment.patient_id}</td>
-                            <td className="px-4 py-2 border-b">{appointment.doctor_id}</td>
+                            <td class="cell">{appointment.id}</td>
+                            <td class="cell">{appointment.date}</td>
+                            <td class="cell">{appointment.patient_id}</td>
+                            <td class="cell">{appointment.doctor_id}</td>
                             <td>
-                                <button onClick={() => handleDelete(appointment.id)}>Delete</button>
+                                <button class="delete" onClick={() => handleDelete(appointment.id)}>x</button>
                             </td>
                         </tr>
                     ))}
