@@ -1,5 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function RegisteredDoctors(){
 
@@ -28,7 +29,8 @@ export default function RegisteredDoctors(){
     }, [])
 
     return (
-        <div>
+        <div class="tble-cont">
+            <Link to="/admin" className="logout-btn">Back</Link>
             <table class="doctor-table">
                 <caption class="title"> DOCTORS </caption>
                 <thead>

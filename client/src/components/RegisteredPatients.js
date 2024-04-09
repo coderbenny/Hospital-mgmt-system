@@ -1,5 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 
 export default function RegisteredPatients(){
 
@@ -29,7 +31,8 @@ export default function RegisteredPatients(){
     }, [])
 
     return (
-        <div>
+        <div class='tble-cont'>
+            <Link to="/admin" className="logout-btn">Back</Link>
             <table class="patient-table">
                 <caption class="title"> PATIENTS </caption>
 
