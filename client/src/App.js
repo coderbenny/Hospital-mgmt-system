@@ -15,7 +15,7 @@ import Admin from './components/Admin'
 import RegisteredPatients from './components/RegisteredPatients'
 import RegisteredDoctors from './components/RegisteredDoctors'
 import Appointments from './components/AdminApppoint'
-
+import './App.css'
 
 function App() {
 
@@ -54,7 +54,7 @@ function App() {
   };
 
   return (
-    <div className=''>
+    <div className='app'>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Home />}></Route>
@@ -78,7 +78,7 @@ function App() {
               log_in={Log_in} 
             />}>
           </Route>
-    
+          
           <Route path='register_patient' element={<RegisterPatient />}></Route>
           <Route path="/doctor_view" element={<DoctorView />}></Route>
           <Route path="/doctor_registration" element={<DoctorReg />}></Route>
