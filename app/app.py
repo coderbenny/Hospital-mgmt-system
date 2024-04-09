@@ -23,7 +23,7 @@ migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 Session(app)
 # CORS(app)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 # server_session= Session(app)
 db.init_app(app)
@@ -39,35 +39,103 @@ class Index(Resource):
 class ViewDoctor(Resource):
 
     def get(self):
-        try:
-            doctors = Doctor.query.all()
-            # result = [doctor.to_dict(include_appointments=False) for doctor in doctors]
-            docs = []
-            for doctor in doctors:
-                doctor_dict = {
-                    "name": doctor.name, 
-                    "speciality": doctor.speciality,
-                    "id": doctor.id
-                }
-                docs.append(doctor_dict)
-            return make_response(jsonify(docs),200)
-        except Exception as e:
-            return make_response({"error":"Doctors not Found/Exist"},404)
+        doctors = Doctor.query.all()
+        
+        if not doctors:
+            return {"error":"Doctors not found"}, 404
+        
+        response = make_response(
+            jsonify([dr.to_dict() for dr in doctors]),
+            200
+        )
+        
+        return response
     
     def post(self):
-        name= request.get_json()['name']
-        speciality= request.get_json()['speciality']
-        new_doctor=Doctor(
-            name=name,
-            speciality=speciality
+        data = request.get_json()
+        
+        if not data:
+            return {"error":"Invalid data"}, 401
+        
+        name = data.get('name')
+        email = data.get('email')
+        password = data.get('password')
+        speciality = data.get('speciality')
+        role_id = data.get('role_id')
+        
+        if not all([name, email, password, speciality]):
+            return {"error":"Invalid data"}, 401
+                
+        _password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+                
+        # creating the user
+        new_user = User(
+            username=name,
+            email=email,
+            role_id=role_id, 
+            _password_hash=_password_hash
         )
+        
+        # commit user  
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return make_response(jsonify({"error": f"New user creation failed: {str(e)}"}), 500)
+        
+        # create doctor -> assign the new_user id
+        new_doctor = Doctor(
+            name=name,
+            speciality=speciality,
+            user_id=new_user.id
+        )
+        
+        try:
+            db.session.add(new_doctor)
+            db.session.commit()
+            return make_response(jsonify(new_doctor.to_dict(include_appointments=True)), 200)
+        except Exception as e:
+            db.session.rollback()
+            return make_response(jsonify({'error': f"Doctor creation failed: {str(e)}"}), 500)
+
+        
+        if not all([name, email, password, speciality]):
+            return {"error":"Invalid data"}, 401
+                
+        _password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+                
+        # creating the user
+        new_user = User(
+            username = name,
+            email = email,
+            role_id = role_id, 
+            _password_hash = _password_hash
+        )
+        
+        # commit user  
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            return jsonify(new_user.to_dict())
+        except Exception as e:
+            db.session.rollback()
+            return make_response(jsonify({"error":f"New user creation failed: {str(e)}"}), 500)
+        
+        # create doctor -> assign the new_user id
+        new_doctor = Doctor(
+            name = name,
+            speciality = speciality,
+            user_id = new_user.id
+        )
+        
         try:
             db.session.add(new_doctor)
             db.session.commit()
             return make_response(jsonify(new_doctor.to_dict(include_appointments=True)),200)
         except:
             db.session.rollback()
-            return make_response(jsonify({'error':"Post  Failed"}),500)
+            return make_response(jsonify({'error':"Doctor cretion failed"}),500)
 
 class ViewDoctorById(Resource):
 
@@ -78,7 +146,7 @@ class ViewDoctorById(Resource):
             if doctor is None: 
                 return make_response(jsonify({'error':'Doctor with such id does not exist'}),404)
             else:
-                return make_response(jsonify(doctor.to_dict()),200)
+                return make_response(jsonify(doctor.to_dict(include_appointments=True)),200)
         except Exception as e:
             return make_response({"error":"Doctors not Found/Exist"},404)
             
@@ -215,6 +283,8 @@ class ViewAppointmentById(Resource):
         )
 
         return response
+
+
     
 class Register(Resource):
     def post(self):

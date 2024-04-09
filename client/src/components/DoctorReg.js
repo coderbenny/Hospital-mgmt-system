@@ -1,8 +1,12 @@
 import React, {useState} from "react"
-import { NavLink } from "react-router-dom";
-import httpsClient from "./httpsClient";
+import { NavLink, useNavigate} from "react-router-dom";
+import axios from "axios";
+// import httpsClient from "./httpsClient";
 
 function DoctorReg(){
+
+    // History ref
+    const navigate = useNavigate()
 
     // State for password error
     const[pwdMatchError, setPwdMatchError]=useState(false)
@@ -13,24 +17,23 @@ function DoctorReg(){
         'speciality':'',
         'email':'',
         'password':'',
+        'password2':'',
         'role_id':''
     })
 
     // Handling input change
-    function handleInputChange(e){        
+    function handleInputChange(e){
+        const value = e.target.type === 'number' ? parseInt(e.target.value) : e.target.value;
+            
         setRegDetails({
             ...regDetails,
-            [e.target.name]:e.target.value
+            [e.target.name]:value
         })
     }
 
     // Handle password-match logic
     const pwdMatchLogic = (regDetails) =>{
-        if (regDetails.password != regDetails.password2){
-            setPwdMatchError(true)
-        }else{
-            setPwdMatchError(false)
-        }
+        return regDetails.password === regDetails.password2
     }
 
 
@@ -39,16 +42,25 @@ function DoctorReg(){
         e.preventDefault();
         const pwdMatch = pwdMatchLogic(regDetails)
     
-        if (pwdMatch){
+        if (pwdMatch  == 'False') {
+            setPwdMatchError(true);
             return;
         }
+        
+        // If passwords match, continue with form submission
         try {
-            const response = await httpsClient.post('http://127.0.0.1:5555/doctor', regDetails);
-            console.log(response.data); 
+            const response = await axios.post('/doctors', regDetails);
+            console.log(response.data);
+            if (response.status == 200){
+                alert("User created succesfully! Redirecting you to login.")
+                navigate("/doctor_login")
+            } 
         } catch (error) {
             console.error('Error:', error);
         }
     };
+
+    const specialities = ['cardiologist', 'surgeon', 'phsiotherapist','pediatric']
 
     console.log(regDetails)
 
@@ -59,7 +71,7 @@ function DoctorReg(){
                 <h1 className="text-3xl font-bold mb-5">Doctor Registration Form</h1>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-1">Full Name</label>
-                    <input type="text" name="username" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" />
+                    <input type="text" name="name" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-1">email</label>
@@ -68,7 +80,22 @@ function DoctorReg(){
 
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-1">Role ID</label>
-                    <input type="number" name="role_id" onChange={handleInputChange} min="1" max="3" className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" />
+                    <input type="number" name="role_id" defaultValue="1" onChange={handleInputChange} min="1" max="3" className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-1">Speciality</label>
+                    <select
+                        name="speciality"
+                        value={regDetails.speciality}
+                        onChange={handleInputChange}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+                    >
+                        <option value='' disabled>Select Speciality</option>
+                            {specialities.map((sp, index) => (
+                                <option key={index} value={sp}>{sp}</option>
+                            ))}
+                    </select>
                 </div>
 
                 <div className="mb-4">
@@ -77,7 +104,7 @@ function DoctorReg(){
                 </div>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-1">Repeat Password</label>
-                    <input type="password" name="password2" className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" />
+                    <input type="password" name="password2" onChange={handleInputChange} className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" />
                 {pwdMatchError && <p className="text-red-500 text-xs italic">Passwords don't match</p>}
                 </div>
                 

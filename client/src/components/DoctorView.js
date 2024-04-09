@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react"
 import { NavLink } from "react-router-dom";
 import DrAptRequests from "./DrAptRequests";
 import DrFixedApts from "./DrFixedApts";
-import httpsClient from './httpsClient';
+// import httpsClient from './httpsClient';
+import axios from "axios";
 
 
 function DoctorView(){
@@ -14,9 +15,14 @@ function DoctorView(){
 
     //GET logged in user info
     const UserInfo= async  () =>{
-        const response = await fetch("http://localhost:3000/@me")
+        const response = await axios.get("http://localhost:3000/@me")
         setUser(response)
         console.log(response)
+    }
+
+    const doctorAppointments = async()=>{
+        const response = await axios.get("http://localhost:3000/appointments")
+        setAppointments(response)
     }
 
     useEffect(() => {

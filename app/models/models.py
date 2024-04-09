@@ -29,7 +29,6 @@ class Doctor(db.Model, SerializerMixin):
     appointments=db.relationship("Appointment" , back_populates="doctor")
     users=relationship("User", back_populates= "doctors")
 
-
     def to_dict(self, visited=None, include_appointments=False):
         if visited is None:
             visited = set()
@@ -41,7 +40,7 @@ class Doctor(db.Model, SerializerMixin):
                 'id': self.id,
                 'name': self.name,
                 'speciality' : self.speciality,
-                "appointments" : [ap.appointment.to_dict(visited) for ap in self.appointments]
+                "appointments" : [ap.to_dict(visited) for ap in self.appointments]
             }
         else:
             return {
@@ -126,6 +125,7 @@ class Appointment(db.Model, SerializerMixin):
             "date" : self.date,
             "patient" : self.patient.to_dict(visited),
             "doctor" : self.doctor.to_dict(visited)
+     
         }
 
 class User(db.Model, SerializerMixin):
