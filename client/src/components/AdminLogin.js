@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Navigate } from 'react-router-dom';
+import './admin.css'
 
 class AdminLogin extends Component {
 

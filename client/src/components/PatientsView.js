@@ -9,7 +9,7 @@ function PatientsView() {
 
   //GET logged in user info
   const UserInfo= async  () =>{
-    let response = await fetch("http://localhost:3000/@me")
+    let response = await fetch("http://127.0.0.1:5555/@me")
     console.log(response)
     setUser(response)
   }
@@ -19,14 +19,14 @@ function PatientsView() {
       <h1 className="text-center font-bold text-white">Patient View</h1>
       {/* <p className="text-center font-bold text-white items-center h-full justify-center">John Kamau</p> */}
       <div className="flex flex-col justify-center items-center h-full">
-      <p className="text-center font-bold text-white ">John Kamau</p>
+      {/* <p className="text-center font-bold text-white ">John Kamau</p> */}
         <div className="circle">
           <button className="bg-green-600 text-center text-white w-24 h-24 rounded-full mb-6" onClick={()=>window.location.href="/bookappointments"}>Book Appointments</button>
           <button className="bg-green-600 text-center text-white w-24 h-24 rounded-full mb-6" onClick={()=>window.location.href="/"}>Log Out</button>
           <button className="bg-green-600 text-center text-white w-24 h-24 rounded-full mb-6" onClick={()=>window.location.href="/patientsprofile"}>My Profile</button>
           <button className="bg-green-600 text-center text-white w-24 h-24 rounded-full mb-6" onClick={()=>window.location.href="/patientappointments"}>View Appointments</button>
-          <button className="bg-green-600 text-center text-white w-24 h-24 rounded-full mb-6" onClick={()=>window.location.href="/"}>Book Appointments</button>
-          <button className="bg-green-600 text-center text-white w-24 h-24 rounded-full mb-6" onClick={()=>window.location.href="/"}>New button</button>
+          {/* <button className="bg-green-600 text-center text-white w-24 h-24 rounded-full mb-6" onClick={()=>window.location.href="/"}>Book Appointments</button>
+          <button className="bg-green-600 text-center text-white w-24 h-24 rounded-full mb-6" onClick={()=>window.location.href="/"}>New button</button> */}
         </div>
       </div>
     </div>
