@@ -7,23 +7,20 @@ import httpsClient from './httpsClient';
 
 function DoctorView(){
 
+    // Appointments state
     const [appointments, setAppointments] = useState([]);
+    //UserInfo state
+    const [user,setUser] = useState({}) 
 
-    const getAppointments = async () => {
-        try {
-        const resp = await httpsClient.get("http://127.0.0.1:5555/appointments");
-        setAppointments(resp.data);
-        } catch (error) {
-        if (error && error.response && error.response.status === 401) {
-            alert("Invalid Credentials");
-        } else {
-            console.error("An unexpected error occurred:", error);
-        }
-        }
-    };
+    //GET logged in user info
+    const UserInfo= async  () =>{
+        const response = await fetch("http://localhost:3000/@me")
+        setUser(response)
+        console.log(response)
+    }
 
     useEffect(() => {
-        getAppointments();
+        UserInfo();
     }, []);
 
     return(
