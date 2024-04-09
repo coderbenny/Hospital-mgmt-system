@@ -32,6 +32,9 @@ export default function RegisteredPatients(){
 
     return (
         <div class='tble-cont'>
+            <div>
+                
+            </div>
             <Link to="/admin" className="logout-btn">Back</Link>
             <table class="patient-table">
                 <caption class="title"> PATIENTS </caption>

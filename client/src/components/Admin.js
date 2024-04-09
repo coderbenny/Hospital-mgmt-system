@@ -16,7 +16,7 @@ function Admin(){
                     <Link to="/RegisteredDoctors" className="logout-btn">Doctors</Link>
                     <Link to="/Appointments" className="logout-btn">Appointments</Link>
                     <Link to="/RegisteredPatients" className="logout-btn">Patients</Link>
-                    <Link to="/" className="logout-btn">Log Out</Link>
+                    <button className="logout-btn" onClick={()=>window.location.href="/"}>Log Out</button>
                 </div>
             </div>
         </div>
