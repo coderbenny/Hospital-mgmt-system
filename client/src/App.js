@@ -12,7 +12,10 @@ import DoctorView from './components/DoctorView'
 import DoctorUpdate from './components/DoctorUpdate'
 import DoctorReg from './components/DoctorReg';
 import Admin from './components/Admin'
-
+import RegisteredPatients from './components/RegisteredPatients'
+import RegisteredDoctors from './components/RegisteredDoctors'
+import Appointments from './components/AdminApppoint'
+import './App.css'
 
 function App() {
 
@@ -34,7 +37,6 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // 'Access-Control-Allow-Origin' : '*',
         },
         body: JSON.stringify(data),
       });
@@ -52,7 +54,7 @@ function App() {
   };
 
   return (
-    <div className=''>
+    <div className='app'>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Home />}></Route>
@@ -84,6 +86,9 @@ function App() {
           <Route path="/patientview" element={<PatientsView />}></Route>
           <Route path="/patientappointments" element={<Appointment />}></Route>
           <Route path="/bookappointments" element={<BookAppointments />}></Route>
+          <Route path="/RegisteredDoctors" element={<RegisteredDoctors />} />
+          <Route path="/Appointments" element={<Appointments />} />
+          <Route path="/RegisteredPatients" element={<RegisteredPatients />} />
           <Route path="admin" element={<Admin />} />
         </Routes>
       </BrowserRouter>

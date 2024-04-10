@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./admin.css"
 
 
@@ -29,7 +30,8 @@ export default function Appointments(){
     }, []); 
 
     return (
-        <div>
+        <div class="tble-cont">
+            <Link to="/admin" className="logout-btn">Back</Link>
             <table class="app-table">
                 <caption class="title"> APPOINTMENTS </caption>
                 <thead>
