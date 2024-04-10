@@ -231,12 +231,21 @@ class ViewAppointment(Resource):
 
     def get(self):
         try:
+            if 'user_id' in session:
+                user_id = session['user_id']
+                doctor = Doctor.query.filter_by(user_id=user_id).first()
+                
+                if doctor:
+                    appointments = Appointment.query.filter_by(doctor_id=doctor.id).all()
+                    result = [appointment.to_dict() for appointment in appointments]  
+                    return make_response(jsonify(result), 200) 
+                
             appointments = Appointment.query.all()
             result = [appointment.to_dict() for appointment in appointments]
-
-            return make_response(jsonify(result),200)
+            return make_response(jsonify(result), 200)
         except Exception as e:
-            return make_response({"error":"Appointments not Found/Exist"},404)
+            return make_response({"error": "Appointments not Found/Exist"}, 404)
+
     
     def post(self):
         patient_id= request.get_json()['patient_id']
@@ -353,7 +362,8 @@ class CheckSession(Resource):
                 'username' : user.username,
                 'email': user.email
             }
-            return make_response(jsonify(response_dict), 200)
+            response = make_response(jsonify(response_dict), 200)
+            return response
         else:
             return {}, 204
 
@@ -366,7 +376,7 @@ class Login(Resource):
         username = data['username']
         password = data['password']
         email = data['email']
-        role_id = data['role_id']
+        # role_id = data['role_id']
         admins = Admin.query.filter_by(username=username).first()
 
         if admins:
@@ -383,12 +393,13 @@ class Login(Resource):
             if user:
                 if user.authenticate(password):
                     session['user_id'] = user.id
-                    response = make_response(jsonify({'message': 'User login successful'}), 200)
-                    return response
-                else:
-                    return make_response(jsonify({'message': 'Invalid user credentials'}), 400)
+                    # return jsonify(user.to_dict()), 200
+                    return redirect(url_for('doctor_view'))  # Redirect to doctor view route
+               
             else:
-                return make_response(jsonify({"message" : "Email not recognised"}), 400)
+                return make_response(jsonify({'message': 'Invalid user credentials'}), 400)
+        
+
         
 
 class Logout(Resource):
