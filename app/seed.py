@@ -13,53 +13,54 @@ with app.app_context():
 
     print('Deleting...')
 
-    Doctor.query.delete()
-    Patient.query.delete()
-    Appointment.query.delete()
-    User.query.delete()
-    Role.query.delete()
-    Admin.query.delete()
+    # Doctor.query.delete()
+    # Patient.query.delete()
+    # Appointment.query.delete()
+    # User.query.delete()
+    # Role.query.delete()
+    # Admin.query.delete()
 
     # Create some doctors and patients for testing purposes
-    print('adding usernames')
-    users = [User(
-        username=faker.name(),
-        _password_hash=faker.password(),
-        email=faker.email(),
-        role_id=random.randint(1, 2)
-    ) for i in range(20)]
-    db.session.add_all(users)
+    # print('adding usernames')
+    # users = [User(
+    #     username=faker.name(),
+    #     _password_hash=faker.password(),
+    #     email=faker.email(),
+    #     role_id=random.randint(1, 2)
+    # ) for i in range(20)]
+    # db.session.add_all(users)
 
 
-    print("Creating doctors...")
-    specialities=['cardiologist','surgeon','phsiotherapist','pediatric']
-    docs = User.query.filter_by(role_id = 1)
-    doctors = []
-    for d in docs:
-        doctors.append(
-            Doctor(
-                name =  faker.name(),
-                speciality= random.choice(specialities),
-                user_id = d.id
-            )
-        )
+    # print("Creating doctors...")
+    # specialities=['cardiologist','surgeon','phsiotherapist','pediatric']
+    # docs = User.query.filter_by(role_id = 1)
+    # doctors = []
+    # for d in docs:
+    #     doctors.append(
+    #         Doctor(
+    #             name =  faker.name(),
+    #             speciality= random.choice(specialities),
+    #             user_id = d.id
+    #         )
+    #     )
 
-    db.session.add_all(doctors)
+    # db.session.add_all(doctors)
 
-    print("Creating patients...")
-    pats = User.query.filter_by(role_id = 2)
-    patients = []
-    for p in pats:
-        patients.append(
-            Patient(
-                name=faker.name(),
-                age= random.randint(0,100),
-                disease= faker.word(),
-                user_id = p.id
-            )
-        )
+    # print("Creating patients...")
+    # pats = User.query.filter_by(role_id = 2)
+    # patients = []
+    # for p in pats:
+    #     patients.append(
+    #         Patient(
+    #             name=faker.name(),
+    #             age= random.randint(0,100),
+    #             disease= faker.word(),
+    #             user_id = p.id
+    #         )
+    #     )
 
-    db.session.add_all(patients)
+    # db.session.add_all(patients)
+    doctors = [dr for dr in Doctor.query.all()]
 
     print("Creating appointments...")
 

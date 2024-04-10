@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { NavLink } from "react-router-dom";
+import { NavLink, Navigate } from "react-router-dom";
 import DrAptRequests from "./DrAptRequests";
 import DrFixedApts from "./DrFixedApts";
 // import httpsClient from './httpsClient';
@@ -8,26 +8,44 @@ import axios from "axios";
 
 function DoctorView(){
 
-    // Appointments state
+    const [user, setUser] = useState({});
     const [appointments, setAppointments] = useState([]);
-    //UserInfo state
-    const [user,setUser] = useState({}) 
 
-    //GET logged in user info
-    const UserInfo= async  () =>{
-        const response = await axios.get("http://localhost:3000/@me")
-        setUser(response)
-        console.log(response)
+    const fetchUserInfo = async () => {
+        try {
+            const response = await axios.get("/@me");
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error fetching user info:", error);
+        }
     }
 
-    const doctorAppointments = async()=>{
-        const response = await axios.get("http://localhost:3000/appointments")
-        setAppointments(response)
+    const fetchDoctorAppointments = async (doctorId) => {
+        try {
+            const response = await axios.get(`/doctors/${doctorId}`);
+            if (response.status === 200) {
+                setAppointments(response.data.appointments);
+            }
+        } catch (error) {
+            console.error("Error fetching appointments:", error);
+        }
     }
 
     useEffect(() => {
-        UserInfo();
+        fetchUserInfo();
     }, []);
+
+    useEffect(() => {
+        if (user && user.id && user.role_id === 1) {
+            fetchDoctorAppointments(user.id);
+        }
+    }, [user]);
+
+    // if (!user || !user.id || user.role_id !== 1) {
+    //     return <Navigate to="/doctor_login" replace/>;
+    // }
+
+    console.log(user)
 
     return(
         <div className="flex flex-col justify-center items-center mt-5">
