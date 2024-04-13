@@ -1,0 +1,183 @@
+/* --------> GENERAL STYLING FOR ADMIN <--------- */
+.admin{
+    margin: auto;
+    color: #027A76;
+    text-align: center;
+    font-weight: 600;
+    font-size: x-large;
+}
+
+.header{
+    border-radius: 15%;
+    text-align: left;
+}
+
+.title{
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 5px;
+  background-color: #027A76;
+  color: white;    
+  border-color: grey;
+}
+
+/* --------> STYLING DELETE <--------- */
+
+.delete {
+  align-items: center;
+  background-clip: padding-box;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 1.25;
+  margin: 0;
+  min-height: 3rem;
+  position: relative;
+  text-decoration: none;
+  transition: all 250ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: baseline;
+  width: 35px;
+  background-color: red;
+}
+
+.delete:hover,
+.delete:focus {
+  background-color: #027A76;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+}
+
+.delete:hover {
+  transform: translateY(-1px);
+}
+
+.delete:active {
+  background-color: #027A76;
+  box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
+  transform: translateY(0);
+}
+
+/* --------> STYLING COLUMN AND ROWS <--------- */
+
+.column-header {
+    color: whitesmoke;
+    background-color: #027A76;
+    font-size: large;
+    border-width: 2px;
+    padding: 5px 100px;
+    text-align: left;
+}
+
+.cell{
+    border-width: 2px;
+    justify-content: space-evenly;
+    text-align: center;
+    min-width: 300;
+    max-width: max-content;
+    border-color: grey;
+}
+
+
+/* --------> STYLING APPOINTMENT TABLE <--------- */
+
+.app-table{
+    border-radius: 50px 5px 0 0;
+    border-color: red;
+    padding: 10% 20%;
+}
+
+.app-table tbody tr:nth-of-type(even){
+    background-color: rgb(174, 218, 205);
+} 
+
+/* --------> STYLING DOCTOR TABLE <--------- */
+
+.doctor-table{
+  border-radius: 50px 5px 0 0;
+  border-color: red;
+  padding: 10% 20%;
+}
+
+.doctor-table tbody tr:nth-of-type(even){
+  background-color: rgb(174, 218, 205);
+} 
+
+/* --------> STYLING PATIENT TABLE <--------- */
+
+.patient-table{
+  border-radius: 50px 5px 0 0;
+  border-color: red;
+  padding: 10% 20%;
+}
+
+
+.patient-table tbody tr:nth-of-type(even){
+  background-color: rgb(174, 218, 205);
+} 
+
+.links{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 15px;
+  flex-wrap: wrap;
+}
+
+.logout-btn {
+  text-decoration: none;
+  color: white;
+  border: 1px solid black;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  margin-right: 40px;
+  background-color: #027A76;
+}
+
+
+
+.admin-page {
+  background-image: url("./adminbg.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: white;
+  border-radius: 5px;
+  width: max-content;
+  height: 50%;
+}
+
+.tble-cont {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center; /* Center align items */
+  background-image: url('./adminbg.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100vw; /* Fill the width of the viewport */
+  height: 100vh; /* Fill the height of the viewport */
+}
+

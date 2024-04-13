@@ -32,8 +32,21 @@ function BookAppointments() {
         
     }
     const onChange =(e)=>setAppointment({...Appointment,[e.target.name]: e.target.value});
+    const HandleDate=(e)=>{ 
+        let chosendate = new Date(e.target.value);
+        let today =  new Date();
     
-    // style={{backgroundImage:`url(/BookAp.jpg)`}}
+        if (chosendate  > today ) {
+           return onChange(e)
+        }
+        else{
+           return alert( " Please enter a future date")
+        }
+      }
+    
+
+    const Home = () =>{window.location.href='http://localhost:3000/patientview'}
+    
     return (
         <div className="flex flex-col items-center justify-center h-screen" >
             <h1 className="text-3xl font-bold mb-8">Book an Appointment</h1>
@@ -49,6 +62,7 @@ function BookAppointments() {
                         placeholder="Enter doctor's id"
                         value={Appointment.doctor_id}
                         onChange={onChange}
+                        min={1}
                         required
                     />
                 </div>
@@ -62,6 +76,7 @@ function BookAppointments() {
                         value={Appointment.patient_id}
                         onChange={onChange}
                         placeholder="Enter your patient's id"
+                        min={1}
                         required
                     />
                 </div>
@@ -73,7 +88,7 @@ function BookAppointments() {
                         id="date" 
                         className="appearance-none border rounded-full w-full py-2 px-3 text-black-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={Appointment.date}
-                        onChange={onChange}
+                        onChange={HandleDate}
                         placeholder="Choose a date"
                         required
                     />
@@ -83,6 +98,14 @@ function BookAppointments() {
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
                 >
                     Book now
+                </button>
+                <button 
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+                    onClick={Home}
+                    type="submit"
+                    style={{ marginLeft: '60px' }}
+                >
+                    🏠
                 </button>
             </form>
         </div>
