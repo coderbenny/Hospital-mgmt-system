@@ -1,30 +1,51 @@
 import React, { useState, useEffect } from "react"
-import { NavLink } from "react-router-dom";
+import { NavLink, Navigate } from "react-router-dom";
 import DrAptRequests from "./DrAptRequests";
 import DrFixedApts from "./DrFixedApts";
-import httpsClient from './httpsClient';
+// import httpsClient from './httpsClient';
+import axios from "axios";
 
 
 function DoctorView(){
 
+    const [user, setUser] = useState({});
     const [appointments, setAppointments] = useState([]);
 
-    const getAppointments = async () => {
+    const fetchUserInfo = async () => {
         try {
-        const resp = await httpsClient.get("http://127.0.0.1:5555/appointments");
-        setAppointments(resp.data);
+            const response = await axios.get("/@me");
+            console.log(response.data);
         } catch (error) {
-        if (error && error.response && error.response.status === 401) {
-            alert("Invalid Credentials");
-        } else {
-            console.error("An unexpected error occurred:", error);
+            console.error("Error fetching user info:", error);
         }
+    }
+
+    const fetchDoctorAppointments = async (doctorId) => {
+        try {
+            const response = await axios.get(`/doctors/${doctorId}`);
+            if (response.status === 200) {
+                setAppointments(response.data.appointments);
+            }
+        } catch (error) {
+            console.error("Error fetching appointments:", error);
         }
-    };
+    }
 
     useEffect(() => {
-        getAppointments();
+        fetchUserInfo();
     }, []);
+
+    useEffect(() => {
+        if (user && user.id && user.role_id === 1) {
+            fetchDoctorAppointments(user.id);
+        }
+    }, [user]);
+
+    // if (!user || !user.id || user.role_id !== 1) {
+    //     return <Navigate to="/doctor_login" replace/>;
+    // }
+
+    console.log(user)
 
     return(
         <div className="flex flex-col justify-center items-center mt-5">
