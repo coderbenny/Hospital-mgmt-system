@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Home from './components/Home';
 import DoctorLogin from './components/DoctorLogin';
@@ -16,10 +16,11 @@ import RegisteredPatients from './components/RegisteredPatients'
 import RegisteredDoctors from './components/RegisteredDoctors'
 import Appointments from './components/AdminApppoint'
 import './App.css'
+import UserProvider, { UserContext } from './components/UserProvider';
 
 function App() {
-
-  const [Log_in, setLog_in] = useState(false)
+  const [Log_in, setLog_in] = useState(false);
+  const [user, setUser] = useContext(UserContext);
 
   const handleSubmit = async (event, roleId) => {
     event.preventDefault();
@@ -30,7 +31,7 @@ function App() {
       email: formData.get('email'),
       role_id: roleId,
     };
-    console.log(data)
+    console.log(data);
 
     try {
       const response = await fetch('http://127.0.0.1:5555/login', {
@@ -40,7 +41,9 @@ function App() {
         },
         body: JSON.stringify(data),
       });
-      console.log(response)
+      const responseData = await response.json(); 
+      console.log(responseData);  
+      setUser(responseData);
 
       if (response.status !== 200) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -54,45 +57,49 @@ function App() {
   };
 
   return (
-    <div className='app'>
-      <BrowserRouter>
+    <BrowserRouter>
+      <UserProvider>
         <Routes>
-          <Route path='/' element={<Home />}></Route>
+          <Route path='/' element={<Home user={user} />}></Route>
 
           <Route path='doctor_login'
             element={<DoctorLogin
               handleSubmit={(e) => handleSubmit(e, 2)}
-              log_in={Log_in} />}>
+              log_in={Log_in}
+              user={user}
+            />}>
           </Route>
 
           <Route path='patient_login' 
             element={<PatientLogin 
               handleSubmit={(e) => handleSubmit(e, 1)} 
               log_in={Log_in} 
+              user={user}
             />}>
           </Route>
 
           <Route path='admin_login' 
             element={<AdminLogin 
               handleSubmit={(e) => handleSubmit(e, 3)} 
-              log_in={Log_in} 
+              log_in={Log_in}
+              user={user}
             />}>
           </Route>
           
-          <Route path='register_patient' element={<RegisterPatient />}></Route>
-          <Route path="/doctor_view" element={<DoctorView />}></Route>
-          <Route path="/doctor_registration" element={<DoctorReg />}></Route>
-          <Route path="/doctor_update" element={<DoctorUpdate />}></Route>
-          <Route path="/patientview" element={<PatientsView />}></Route>
-          <Route path="/patientappointments" element={<Appointment />}></Route>
-          <Route path="/bookappointments" element={<BookAppointments />}></Route>
-          <Route path="/RegisteredDoctors" element={<RegisteredDoctors />} />
-          <Route path="/Appointments" element={<Appointments />} />
-          <Route path="/RegisteredPatients" element={<RegisteredPatients />} />
-          <Route path="admin" element={<Admin />} />
+          <Route path='register_patient' element={<RegisterPatient user={user} />}></Route>
+          <Route path="/doctor_view" element={<DoctorView user={user} />}></Route>
+          <Route path="/doctor_registration" element={<DoctorReg user={user} />}></Route>
+          <Route path="/doctor_update" element={<DoctorUpdate user={user} />}></Route>
+          <Route path="/patientview" element={<PatientsView user={user} />}></Route>
+          <Route path="/patientappointments" element={<Appointment user={user} />}></Route>
+          <Route path="/bookappointments" element={<BookAppointments user={user} />}></Route>
+          <Route path="/RegisteredDoctors" element={<RegisteredDoctors user={user} />} />
+          <Route path="/Appointments" element={<Appointment user={user} />} />
+          <Route path="/RegisteredPatients" element={<RegisteredPatients user={user} />} />
+          <Route path="admin" element={<Admin user={user} />} />
         </Routes>
-      </BrowserRouter>
-    </div>
+      </UserProvider>
+    </BrowserRouter>
   )
 }
 

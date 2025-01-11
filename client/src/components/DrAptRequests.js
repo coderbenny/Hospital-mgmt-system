@@ -11,12 +11,10 @@ function DrAptRequests(){
                         <h3 className="mb-2 font-semibold">Patient Name</h3>
                         <p className="">John Doe</p>
                     </div>
-
                     <div className="items-center">
                         <h3 className="mb-2 font-semibold">Patient Email</h3>
                         <p className="">johndoe@mail.com</p>
                     </div>
-
                     <div className="items-center">
                         <h3 className="mb-2 font-semibold">Appointment Date</h3>
                         <p className="">2024-12-12</p>

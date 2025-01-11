@@ -190,9 +190,9 @@ class ViewAppointment(Resource):
         
 class ViewAppointmentById(Resource):
 
-    def get(self,id):
+    def get(self,patient_id):
         try: 
-            appointment = Appointment.query.filter_by(id=id).first(
+            appointment = Appointment.query.filter_by(patient_id=patient_id).first(
                 )   #Return first record of the query
             if appointment is None: 
                 return make_response(jsonify({'error':'Appointment with such id does not exist'}),404)
@@ -313,7 +313,12 @@ class Login(Resource):
             if user:
                 if user.authenticate(password):
                     session['user_id'] = user.id
-                    response = make_response(jsonify({'message': 'User login successful'}), 200)
+                    response_dict={
+                        'id' : user.id,
+                        'username' : user.username,
+                        'email': user.email
+                    }
+                    response = make_response(jsonify(response_dict), 200)
                     return response
                 else:
                     return make_response(jsonify({'message': 'Invalid user credentials'}), 400)
@@ -385,7 +390,7 @@ api.add_resource(ViewDoctorById, '/doctors/<int:id>')
 api.add_resource(ViewPatient, '/patients')
 api.add_resource(ViewPatientById, '/patients/<int:id>')
 api.add_resource(ViewAppointment, '/appointments')
-api.add_resource(ViewAppointmentById, '/appointments/<int:id>')
+api.add_resource(ViewAppointmentById, '/appointments/<int:patient_id>')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Register, '/register', endpoint='register')
 api.add_resource(Admins, '/admin', endpoint='admin')

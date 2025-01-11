@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import httpsClient from './httpsClient';
+import { UserContext } from './UserProvider';
 
-function Appointment() {
+function Appointment  ({user}) {
+  // const[user]=useContext(UserContext);
+  console.log(user)
   const [appointments, setAppointments] = useState([]);
   const [search, setSearch]=useState("");
 
@@ -11,7 +14,7 @@ function Appointment() {
 
   const getAppointments = async () => {
     try {
-      const resp = await httpsClient.get("http://127.0.0.1:5555/appointments");
+      const resp = await httpsClient.get(`http://127.0.0.1:5555/appointments`);
       setAppointments(resp.data);
     } catch (error) {
       if (error && error.response && error.response.status === 401) {
